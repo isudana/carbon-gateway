@@ -151,6 +151,11 @@
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -224,6 +229,9 @@
         <carbon.gw.version>1.0.0-SNAPSHOT</carbon.gw.version>
         <carbon.gw.package.export.version>1.0.0</carbon.gw.package.export.version>
 
+        <disruptor.version>3.3.2.wso2v2</disruptor.version>
+        <disruptor.package.import.version.range>[3.3.2, 3.5.0)</disruptor.package.import.version.range>
+
         <osgi.api.version>6.0.0</osgi.api.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
@@ -241,7 +249,7 @@
         <carbon.transport.package.import.version.range>[2.0.0, 2.1.0)
         </carbon.transport.package.import.version.range>
 
-        <carbon.messaging.version>1.0.2</carbon.messaging.version>
+        <carbon.messaging.version>1.0.2-SNAPSHOT</carbon.messaging.version>
 
         <carbon.messaging.package.import.version.range>[0.0.0, 2.0.0)
         </carbon.messaging.package.import.version.range>

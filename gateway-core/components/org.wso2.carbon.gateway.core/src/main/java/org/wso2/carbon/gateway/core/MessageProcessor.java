@@ -23,16 +23,18 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.gateway.core.inbound.Dispatcher;
 import org.wso2.carbon.gateway.core.inbound.InboundEPProviderRegistry;
 import org.wso2.carbon.gateway.core.inbound.Provider;
+import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
+import org.wso2.carbon.gateway.core.worker.WorkerProcessor;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 import org.wso2.carbon.messaging.CarbonMessageProcessor;
 import org.wso2.carbon.messaging.TransportSender;
 
+
 /**
- *  Message Processor Implementation for Gateway
- *
+ * Message Processor Implementation for Gateway
  */
-public class MessageProcessor implements CarbonMessageProcessor {
+public class MessageProcessor implements CarbonMessageProcessor, WorkerProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(MessageProcessor.class);
 
@@ -43,6 +45,25 @@ public class MessageProcessor implements CarbonMessageProcessor {
             log.debug("Gateway received a message");
         }
 
+        WorkerModelDispatcher.getInstance().dispatch(cMsg, this, WorkerModelDispatcher.WorkerMode.CPU);
+
+        return false;
+    }
+
+    @Override
+    public void setTransportSender(TransportSender sender) {
+
+    }
+
+    @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
+    public boolean process(CarbonMessage cMsg) {
+        CarbonCallback carbonCallback = (CarbonCallback) cMsg.getProperty
+                   (org.wso2.carbon.messaging.Constants.CALL_BACK);
         String protocol = "http";  //TODO: Take from cMsg
 
         Provider provider = InboundEPProviderRegistry.getInstance().getProvider(protocol);
@@ -59,17 +80,7 @@ public class MessageProcessor implements CarbonMessageProcessor {
             return false;
         }
 
-        dispatcher.dispatch(cMsg, callback);
+        dispatcher.dispatch(cMsg, carbonCallback);
         return false;
-    }
-
-    @Override
-    public void setTransportSender(TransportSender sender) {
-
-    }
-
-    @Override
-    public String getId() {
-        return null;
     }
 }

@@ -26,6 +26,7 @@ import org.wso2.carbon.gateway.core.flow.mediators.builtin.invokers.RespondMedia
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.manipulators.EnrichMediator;
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.manipulators.LogMediator;
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.manipulators.TransformMediator;
+import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class MediatorProviderRegistry implements ProviderRegistry {
     }
 
     public void registerMediatorProvider(MediatorProvider mediatorProvider) {
+        WorkerModelDispatcher.getInstance().setCustomMediatorDeployed(true);
         mediatorProviders.put(mediatorProvider.getName(), mediatorProvider);
     }
 
