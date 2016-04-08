@@ -36,6 +36,7 @@ import org.wso2.carbon.gateway.core.worker.disruptor.exception.GenericExceptionH
 import org.wso2.carbon.gateway.core.worker.disruptor.handler.CarbonDisruptorEventHandler;
 
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,37 +45,42 @@ import java.util.concurrent.TimeUnit;
 /**
  * Util Class creates Disruptors for Inbound and Outbound Transports.
  */
-public class DisruptorFactory {
+public class DisruptorManager {
 
-    private static ConcurrentHashMap<DisruptorType, DisruptorConfig> disruptorConfigHashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<DisruptorType, DisruptorConfig> disruptorConfigHashMap =
+               new ConcurrentHashMap<>();
+
+    private static boolean doNotStart;
 
     @SuppressWarnings("unchecked")
-    public static void createDisruptors(DisruptorType type, DisruptorConfig disruptorConfig) {
-        WaitStrategy inboundWaitStrategy = getWaitStrategy(disruptorConfig.getDisruptorWaitStrategy());
-        for (int i = 0; i < disruptorConfig.getNoDisruptors(); i++) {
-            ExecutorService executorService = null;
-            executorService =
-                       Executors.newFixedThreadPool(disruptorConfig.getNoOfEventHandlersPerDisruptor());
+    public static synchronized void createDisruptors(DisruptorType type, DisruptorConfig disruptorConfig) {
+        if (!doNotStart) {
+            WaitStrategy inboundWaitStrategy = getWaitStrategy(disruptorConfig.getDisruptorWaitStrategy());
+            for (int i = 0; i < disruptorConfig.getNoDisruptors(); i++) {
+                ExecutorService executorService = Executors.newFixedThreadPool
+                           (disruptorConfig.getNoOfEventHandlersPerDisruptor());
 
-            Disruptor disruptor = new Disruptor<>(CarbonDisruptorEvent.EVENT_FACTORY, disruptorConfig.getBufferSize(),
-                                                  executorService,
-                                                  ProducerType.MULTI,
-                                                  inboundWaitStrategy);
-            ExceptionHandler exh = new GenericExceptionHandler();
+                Disruptor disruptor = new Disruptor<>(CarbonDisruptorEvent.EVENT_FACTORY,
+                                                      disruptorConfig.getBufferSize(),
+                                                      executorService,
+                                                      ProducerType.MULTI,
+                                                      inboundWaitStrategy);
+                ExceptionHandler exh = new GenericExceptionHandler();
 
 
-            EventHandler[] eventHandlers = new EventHandler[disruptorConfig.getNoOfEventHandlersPerDisruptor()];
-            for (int j = 0; j < disruptorConfig.getNoOfEventHandlersPerDisruptor(); j++) {
-                EventHandler eventHandler = new CarbonDisruptorEventHandler();
-                eventHandlers[j] = eventHandler;
+                EventHandler[] eventHandlers = new EventHandler[disruptorConfig.getNoOfEventHandlersPerDisruptor()];
+                for (int j = 0; j < disruptorConfig.getNoOfEventHandlersPerDisruptor(); j++) {
+                    EventHandler eventHandler = new CarbonDisruptorEventHandler();
+                    eventHandlers[j] = eventHandler;
+                }
+                disruptor.handleEventsWith(eventHandlers);
+                for (EventHandler eventHandler : eventHandlers) {
+                    disruptor.handleExceptionsFor(eventHandler).with(exh);
+                }
+                disruptorConfig.addDisruptor(disruptor);
             }
-            disruptor.handleEventsWith(eventHandlers);
-            for (EventHandler eventHandler : eventHandlers) {
-                disruptor.handleExceptionsFor(eventHandler).with(exh);
-            }
-            disruptorConfig.addDisruptor(disruptor.start());
+            disruptorConfigHashMap.put(type, disruptorConfig);
         }
-        disruptorConfigHashMap.put(type, disruptorConfig);
     }
 
 
@@ -111,11 +117,22 @@ public class DisruptorFactory {
         return disruptorConfigHashMap.get(disruptorType);
     }
 
+    public static synchronized void shutdownAllDisruptors() {
+        for (Map.Entry entry : disruptorConfigHashMap.entrySet()) {
+            DisruptorConfig disruptorConfig = (DisruptorConfig) entry.getValue();
+            disruptorConfig.shutdownAllDisruptors();
+        }
+    }
+
+    public static synchronized void setDoNotStart(boolean doNotStart) {
+        DisruptorManager.doNotStart = doNotStart;
+    }
+
     /**
      * Describe types of disruptors.
      */
     public enum DisruptorType {
-        CPU_INBOUND, CPU_OUTBOUND, IO_INBOUND
+        CPU_INBOUND, IO_INBOUND
     }
 
 }

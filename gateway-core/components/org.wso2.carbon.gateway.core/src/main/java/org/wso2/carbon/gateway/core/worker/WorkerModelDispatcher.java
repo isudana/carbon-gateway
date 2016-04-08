@@ -21,7 +21,7 @@ package org.wso2.carbon.gateway.core.worker;
 import com.lmax.disruptor.RingBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.gateway.core.worker.disruptor.config.DisruptorFactory;
+import org.wso2.carbon.gateway.core.worker.disruptor.config.DisruptorManager;
 import org.wso2.carbon.gateway.core.worker.disruptor.publisher.CarbonEventPublisher;
 import org.wso2.carbon.gateway.core.worker.threadpool.ThreadPoolFactory;
 import org.wso2.carbon.messaging.CarbonMessage;
@@ -56,12 +56,12 @@ public class WorkerModelDispatcher {
 
         if (!customMediatorDeployed) {
             if (workerMode == WorkerMode.CPU) {
-                RingBuffer ringBuffer = DisruptorFactory.getDisruptorConfig
-                           (DisruptorFactory.DisruptorType.CPU_INBOUND).getDisruptor();
+                RingBuffer ringBuffer = DisruptorManager.getDisruptorConfig
+                           (DisruptorManager.DisruptorType.CPU_INBOUND).getDisruptor();
                 ringBuffer.publishEvent(new CarbonEventPublisher(carbonMessage, workerProcessor));
             } else if (workerMode == WorkerMode.IO) {
-                RingBuffer ringBuffer = DisruptorFactory.getDisruptorConfig
-                           (DisruptorFactory.DisruptorType.IO_INBOUND).getDisruptor();
+                RingBuffer ringBuffer = DisruptorManager.getDisruptorConfig
+                           (DisruptorManager.DisruptorType.IO_INBOUND).getDisruptor();
                 ringBuffer.publishEvent(new CarbonEventPublisher(carbonMessage, workerProcessor));
             }
         } else {
@@ -86,6 +86,8 @@ public class WorkerModelDispatcher {
 
     public void setCustomMediatorDeployed(boolean customMediatorDeployed) {
         this.customMediatorDeployed = customMediatorDeployed;
+        DisruptorManager.setDoNotStart(true);
+        DisruptorManager.shutdownAllDisruptors();
     }
 
     /**

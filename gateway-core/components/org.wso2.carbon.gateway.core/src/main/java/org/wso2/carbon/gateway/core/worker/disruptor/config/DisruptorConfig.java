@@ -19,6 +19,7 @@
 package org.wso2.carbon.gateway.core.worker.disruptor.config;
 
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.dsl.Disruptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.gateway.core.worker.Constants;
@@ -37,22 +38,17 @@ public class DisruptorConfig {
     private int bufferSize = 512;
     private int noDisruptors = 5;
     private int noOfEventHandlersPerDisruptor = 1;
-    private int noOfThreadsInConsumerWorkerPool = 0;
     private String disruptorWaitStrategy = Constants.PHASED_BACKOFF;
-    private boolean notShared;
-    private List<RingBuffer> disruptorMap = new ArrayList<>();
+    private List<RingBuffer> ringBuffers = new ArrayList<>();
+    private List<Disruptor> disruptors = new ArrayList<>();
     private AtomicInteger index = new AtomicInteger(0);
 
     public DisruptorConfig() {
 
-        logger.debug("Disruptor configration created with buffer size :=  " + this.bufferSize +
-                     " , no of disruptors :=" + this.noDisruptors +
-                     " , no of event handlers per disruptor := " + this.noOfEventHandlersPerDisruptor +
-                     ", wait strategy :=" + this.disruptorWaitStrategy);
     }
 
     public DisruptorConfig(String bufferSize, String noDisruptors, String noOfEventHandlersPerDisruptor,
-                           String disruptorWaitStrategy, boolean notShared, String noOfThreadsInConsumerWorkerPool) {
+                           String disruptorWaitStrategy) {
         if (bufferSize != null) {
             this.bufferSize = Integer.parseInt(bufferSize);
         }
@@ -69,20 +65,10 @@ public class DisruptorConfig {
             this.disruptorWaitStrategy = disruptorWaitStrategy;
         }
 
-        this.notShared = notShared;
         logger.debug("Disruptor configration created with buffer size :=  " + this.bufferSize +
                      " , no of disruptors :=" + this.noDisruptors +
                      " , no of event handlers per disruptor := " + this.noOfEventHandlersPerDisruptor +
                      ", wait strategy :=" + this.disruptorWaitStrategy);
-        if (noOfThreadsInConsumerWorkerPool != null) {
-            this.noOfThreadsInConsumerWorkerPool = Integer.parseInt(noOfThreadsInConsumerWorkerPool);
-            logger.debug(" Consumer pool with " + this.noOfThreadsInConsumerWorkerPool +
-                         " is used for Disruptor EventHandlers");
-
-        } else {
-            logger.debug("Worker Pool mode is disabled for Disruptor");
-        }
-
     }
 
     public int getBufferSize() {
@@ -101,24 +87,46 @@ public class DisruptorConfig {
         return disruptorWaitStrategy;
     }
 
-    public boolean isShared() {
-        return !notShared;
-    }
-
     public RingBuffer getDisruptor() {
         int ind = index.getAndIncrement() % noDisruptors;
-        return disruptorMap.get(ind);
+        return ringBuffers.get(ind);
     }
 
-    public void addDisruptor(RingBuffer ringBuffer) {
-        disruptorMap.add(ringBuffer);
+    public void addDisruptor(Disruptor disruptor) {
+        disruptors.add(disruptor);
+        ringBuffers.add(disruptor.start());
     }
 
     public void notifyChannelInactive() {
         index.getAndDecrement();
     }
 
-    public int getNoOfThreadsInConsumerWorkerPool() {
-        return noOfThreadsInConsumerWorkerPool;
+    public  void shutdownAllDisruptors() {
+        for (Disruptor disruptor : disruptors) {
+            disruptor.shutdown();
+        }
+        ringBuffers.clear();
+    }
+
+    public  void startAllDisruptors() {
+        for (Disruptor disruptor : disruptors) {
+            ringBuffers.add(disruptor.start());
+        }
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
+    public void setNoDisruptors(int noDisruptors) {
+        this.noDisruptors = noDisruptors;
+    }
+
+    public void setNoOfEventHandlersPerDisruptor(int noOfEventHandlersPerDisruptor) {
+        this.noOfEventHandlersPerDisruptor = noOfEventHandlersPerDisruptor;
+    }
+
+    public void setDisruptorWaitStrategy(String disruptorWaitStrategy) {
+        this.disruptorWaitStrategy = disruptorWaitStrategy;
     }
 }
