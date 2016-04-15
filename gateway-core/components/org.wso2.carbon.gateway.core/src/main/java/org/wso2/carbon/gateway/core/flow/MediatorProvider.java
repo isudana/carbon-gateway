@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow;
 
 /**
- * Interface for Mediator Providers
+ * Interface for Mediator Providers.
  *
  * MediatorProvider is responsible for providing an instance of a Mediator
  *

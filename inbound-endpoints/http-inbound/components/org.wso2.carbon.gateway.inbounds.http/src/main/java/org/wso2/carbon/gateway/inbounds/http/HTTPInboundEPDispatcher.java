@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 
 /**
- * This handles the message dispatching for HTTP Inbound Endpoints
+ * This handles the message dispatching for HTTP Inbound Endpoints.
  */
 public class HTTPInboundEPDispatcher implements Dispatcher, ConfigRegistryObserver {
 

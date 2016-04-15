@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * A Util class responsible for evaluate carbon message according to condition
+ * A Util class responsible for evaluate carbon message according to condition.
  */
 public class Evaluator {
 

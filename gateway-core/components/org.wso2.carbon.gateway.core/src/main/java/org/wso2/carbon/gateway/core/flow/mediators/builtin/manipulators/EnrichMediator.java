@@ -24,7 +24,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Basic Enrich mediator implementation
+ * Basic Enrich mediator implementation.
  * TODO: Not implemented yet
  */
 public class EnrichMediator extends AbstractMediator {

@@ -24,7 +24,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Callback related to FlowController Mediators
+ * Callback related to FlowController Mediators.
  */
 public class FlowControllerCallback implements CarbonCallback {
 

@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow.contentaware;
 
 /**
- * map converters with source type and target Type
+ * map converters with source type and target Type.
  */
 public class TypeMapper {
 

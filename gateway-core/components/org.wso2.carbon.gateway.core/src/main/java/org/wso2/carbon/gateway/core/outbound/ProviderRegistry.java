@@ -18,7 +18,7 @@
 package org.wso2.carbon.gateway.core.outbound;
 
 /**
- * Interface for Inbound Provider Registry
+ * Interface for Inbound Provider Registry.
  */
 public interface ProviderRegistry {
 

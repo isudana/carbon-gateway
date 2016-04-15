@@ -21,7 +21,7 @@ package org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filt
 import java.util.regex.Pattern;
 
 /**
- * A class that represents the Condition
+ * A class that represents the Condition.
  */
 public class Condition {
 

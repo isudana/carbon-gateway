@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Store for the Inbound Endpoint Providers
+ * Store for the Inbound Endpoint Providers.
  */
 public class InboundEPProviderRegistry implements ProviderRegistry {
 

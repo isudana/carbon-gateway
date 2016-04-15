@@ -25,7 +25,7 @@ import org.wso2.carbon.gateway.core.outbound.OutboundEPProvider;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 
 /**
- * HTTP Outbound Provider
+ * HTTP Outbound Provider.
  *
  * This is responsible for providing a http outbound endpoint instance to engine
  *

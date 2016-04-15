@@ -24,7 +24,7 @@ import org.wso2.carbon.gateway.core.config.dsl.internal.flow.PipelineBuilder;
 import org.wso2.carbon.gateway.core.inbound.InboundEndpoint;
 
 /**
- * A Builder class for Inbound Endpoint
+ * A Builder class for Inbound Endpoint.
  */
 public class InboundEPBuilder {
 

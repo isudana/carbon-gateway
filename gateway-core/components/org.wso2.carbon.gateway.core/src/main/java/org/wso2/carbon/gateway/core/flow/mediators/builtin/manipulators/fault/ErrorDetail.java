@@ -20,7 +20,7 @@ package org.wso2.carbon.gateway.core.flow.mediators.builtin.manipulators.fault;
 
 
 /**
- * A class represents error details
+ * A class represents error details.
  */
 public class ErrorDetail {
 

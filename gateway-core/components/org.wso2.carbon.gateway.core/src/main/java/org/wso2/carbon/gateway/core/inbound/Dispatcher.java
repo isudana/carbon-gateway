@@ -22,12 +22,12 @@ import org.wso2.carbon.messaging.CarbonMessage;
 
 
 /**
- * Message Dispatcher Interface. Need to have a protocol specific dispatcher
+ * Message Dispatcher Interface. Need to have a protocol specific dispatcher.
  */
 public interface Dispatcher {
 
     /**
-     * Dispatch the message to an inbound endpoint
+     * Dispatch the message to an inbound endpoint.
      *
      * @param carbonMessage Carbon Message
      * @param callback      Callback

@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Store for MediatorProviders
+ * Store for MediatorProviders.
  */
 public class MediatorProviderRegistry implements ProviderRegistry {
 

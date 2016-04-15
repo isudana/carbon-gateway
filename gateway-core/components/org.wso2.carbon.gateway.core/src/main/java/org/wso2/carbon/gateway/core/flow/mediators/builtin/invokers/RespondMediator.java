@@ -25,7 +25,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Mediator responsible for sending the response from pipeline back to client
+ * Mediator responsible for sending the response from pipeline back to client.
  */
 public class RespondMediator extends AbstractMediator implements Invoker {
 

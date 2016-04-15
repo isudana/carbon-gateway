@@ -28,7 +28,7 @@ import org.wso2.carbon.gateway.core.flow.mediators.builtin.invokers.CallMediator
 import java.util.regex.Pattern;
 
 /**
- * A class that responsible for build collection of mediators
+ * A class that responsible for build collection of mediators.
  */
 public class MediatorCollectionBuilder {
 

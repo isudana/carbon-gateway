@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow.mediators.builtin.manipulators;
 
 /**
- * A Header Mediator uses to mediate headers
+ * A Header Mediator uses to mediate headers.
  * TODO: Not implemented yet
  */
 public class HeaderMediator {

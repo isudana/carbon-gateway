@@ -22,12 +22,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utility class to do string parsing
+ * Utility class to do string parsing.
  */
 public class StringParserUtil {
 
     /**
-     * return value within double quotes
+     * return value within double quotes.
      * @param inputString string with double quotes
      * @return value
      */
@@ -41,7 +41,7 @@ public class StringParserUtil {
     }
 
     /**
-     * return value within brackets
+     * return value within brackets.
      * @param inputString string with brackets
      * @return value
      */

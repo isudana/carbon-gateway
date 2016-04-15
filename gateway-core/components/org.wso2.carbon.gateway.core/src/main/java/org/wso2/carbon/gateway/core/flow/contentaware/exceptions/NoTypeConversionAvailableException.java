@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow.contentaware.exceptions;
 
 /**
- * An exception thrown if a value could not be converted to the required type
+ * An exception thrown if a value could not be converted to the required type.
  */
 public class NoTypeConversionAvailableException extends Exception {
 
@@ -40,14 +40,14 @@ public class NoTypeConversionAvailableException extends Exception {
     }
 
     /**
-     * Returns the value which could not be converted
+     * Returns the value which could not be converted.
      */
     public Object getValue() {
         return value;
     }
 
     /**
-     * Returns the required <tt>to</tt> type
+     * Returns the required <tt>to</tt> type.
      */
     public Class<?> getToType() {
         return type;

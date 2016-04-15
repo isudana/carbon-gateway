@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 
 /**
- * Service Component for for MediatorProviders
+ * Service Component for for MediatorProviders.
  *
  * This will wait until all the MediatorProviders availability and register ProviderRegistry as a
  * service so that others can consume it.

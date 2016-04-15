@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is the central place where all the configurations are stored at the runtime
+ * This is the central place where all the configurations are stored at the runtime.
  */
 public class ConfigRegistry {
 
@@ -58,7 +58,7 @@ public class ConfigRegistry {
     }
 
     /**
-     * Add a Gateway Artifact Configuration to the Registry
+     * Add a Gateway Artifact Configuration to the Registry.
      *
      * @param configHolder a Gateway Artifact
      */
@@ -68,7 +68,7 @@ public class ConfigRegistry {
     }
 
     /**
-     * Remove a Gateway Artifact configuration
+     * Remove a Gateway Artifact configuration.
      *
      * @param configHolder a Gateway Artifact
      */

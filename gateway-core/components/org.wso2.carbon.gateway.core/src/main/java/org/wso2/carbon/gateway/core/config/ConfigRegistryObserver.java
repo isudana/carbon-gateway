@@ -21,19 +21,19 @@ package org.wso2.carbon.gateway.core.config;
 import org.wso2.carbon.gateway.core.inbound.InboundEndpoint;
 
 /**
- * Observer for changes in InboundEndpoints Registry
+ * Observer for changes in InboundEndpoints Registry.
  */
 public interface ConfigRegistryObserver {
 
     /**
-     * Triggered when Endpoint is added
+     * Triggered when Endpoint is added.
      *
      * @param endpoint Inbound Endpoint which got added
      */
     void endpointAdded(InboundEndpoint endpoint);
 
     /**
-     * Triggered when Endpoint is removed
+     * Triggered when Endpoint is removed.
      *
      * @param endpoint Inbound Endpoint which got removed
      */

@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * An InboundEndpoint Manager class
+ * An InboundEndpoint Manager class.
  * <p>
  * This acts as the Deployer for HTTP Inbound Endpoint as well as a Transport Listener Manager
  */

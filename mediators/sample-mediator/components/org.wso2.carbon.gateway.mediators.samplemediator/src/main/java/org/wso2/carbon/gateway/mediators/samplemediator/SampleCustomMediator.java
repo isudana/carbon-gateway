@@ -25,7 +25,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Sample Custom Mediator
+ * Sample Custom Mediator.
  */
 public class SampleCustomMediator extends AbstractMediator {
 

@@ -27,7 +27,7 @@ import org.wso2.carbon.gateway.core.inbound.InboundEndpoint;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 
 /**
- * A class that used to create entire configuration.Anyone can extend this and overwrite configure method with
+ * A class that used to create entire configuration.Anyone can extend this and overwrite configure method with.
  * relevant configuration
  */
 public abstract class JavaConfigurationBuilder {
@@ -40,7 +40,7 @@ public abstract class JavaConfigurationBuilder {
     }
 
     /**
-     * ESB Configuration Builder
+     * ESB Configuration Builder.
      */
     public static class IntegrationFlow {
 

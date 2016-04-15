@@ -45,7 +45,7 @@ public interface TypeConverterRegistry {
     void addTypeConverter(String targetType, String sourceType, TypeConverter typeConverter);
 
     /**
-     * Removes the type converter
+     * Removes the type converter.
      *
      * @param toType   the type to convert to
      * @param fromType the type to convert from
@@ -54,7 +54,7 @@ public interface TypeConverterRegistry {
     boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
 
     /**
-     * Removes the type converter
+     * Removes the type converter.
      *
      * @param targetType the type to convert to
      * @param sourceType the type to convert from

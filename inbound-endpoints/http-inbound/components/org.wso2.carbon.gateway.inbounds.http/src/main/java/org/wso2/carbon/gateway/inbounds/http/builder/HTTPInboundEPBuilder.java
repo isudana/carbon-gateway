@@ -22,7 +22,7 @@ package org.wso2.carbon.gateway.inbounds.http.builder;
 import org.wso2.carbon.gateway.inbounds.http.HTTPInboundEP;
 
 /**
- * A Builder class for HTTP Inbound Endpoint
+ * A Builder class for HTTP Inbound Endpoint.
  */
 public class HTTPInboundEPBuilder {
 
@@ -42,7 +42,7 @@ public class HTTPInboundEPBuilder {
     }
 
     /**
-     * Port
+     * Port.
      */
     public static class Port {
         int port;
@@ -57,7 +57,7 @@ public class HTTPInboundEPBuilder {
     }
 
     /**
-     * Context
+     * Context.
      */
     public static class Context {
         String context;
