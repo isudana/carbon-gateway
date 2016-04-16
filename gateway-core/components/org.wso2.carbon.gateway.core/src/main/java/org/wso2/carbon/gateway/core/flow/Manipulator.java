@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow;
 
 /**
- * An interface to identify message Manipulators
+ * An interface to identify message Manipulators.
  */
 public interface Manipulator extends Mediator {
 

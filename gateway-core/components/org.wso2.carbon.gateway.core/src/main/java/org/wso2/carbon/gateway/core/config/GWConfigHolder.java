@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Object Model which holds configurations related to a one GW process
+ * Object Model which holds configurations related to a one GW process.
  */
 public class GWConfigHolder {
 

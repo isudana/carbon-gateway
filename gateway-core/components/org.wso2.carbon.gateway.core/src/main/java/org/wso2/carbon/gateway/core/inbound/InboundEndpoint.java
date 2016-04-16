@@ -49,7 +49,7 @@ public abstract class InboundEndpoint {
     }
 
     /**
-     * Check whether Carbon message can be processed with this endpoint
+     * Check whether Carbon message can be processed with this endpoint.
      *
      * @param cMsg Carbon Message
      * @return Check whether Carbon message can be processed with this endpoint
@@ -57,7 +57,7 @@ public abstract class InboundEndpoint {
     public abstract boolean canReceive(CarbonMessage cMsg);
 
     /**
-     * Process the message
+     * Process the message.
      *
      * @param cMsg     Carbon Message
      * @param callback Callback to execute response flow

@@ -23,7 +23,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Outbound Endpoint Interface
+ * Outbound Endpoint Interface.
  */
 public interface OutboundEndpoint {
 

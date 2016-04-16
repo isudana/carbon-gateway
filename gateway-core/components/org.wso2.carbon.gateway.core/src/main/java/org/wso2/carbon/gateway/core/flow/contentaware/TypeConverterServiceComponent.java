@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.gateway.core.flow.contentaware.abstractcontext.TypeConverter;
 
 /**
- * Service component for type converters
+ * Service component for type converters.
  */
 @Component(
         name = "org.wso2.carbon.gateway.core.flow.contentAwareSupport.TypeConverterServiceComponent",

@@ -36,14 +36,14 @@ public class TypeConversionException extends Exception {
     }
 
     /**
-     * Returns the value which could not be converted
+     * Returns the value which could not be converted.
      */
     public Object getValue() {
         return value;
     }
 
     /**
-     * Returns the required <tt>to</tt> type
+     * Returns the required <tt>to</tt> type.
      */
     public Class<?> getToType() {
         return type;

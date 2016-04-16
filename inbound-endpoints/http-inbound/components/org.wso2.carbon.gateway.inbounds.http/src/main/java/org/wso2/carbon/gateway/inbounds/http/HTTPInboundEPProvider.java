@@ -29,7 +29,7 @@ import org.wso2.carbon.gateway.core.inbound.Provider;
 import org.wso2.carbon.messaging.TransportListenerManager;
 
 /**
- * HTTP Inbound Provider
+ * HTTP Inbound Provider.
  * <p>
  * This is responsible for providing a http inbound endpoint instance to engine
  * And also this is responsible for registering other required services

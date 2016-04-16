@@ -31,7 +31,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * A class to decouple the mediators from the TypeConverterRegistry and to handle
+ * A class to decouple the mediators from the TypeConverterRegistry and to handle.
  * the conversions.
  */
 public class ConversionManager {

@@ -118,7 +118,7 @@ public class DSLLoader {
 
 
     /**
-     * Load Java DSL configuration file
+     * Load Java DSL configuration file.
      *
      * @param javaConfigurationBuilder Java DSL
      */

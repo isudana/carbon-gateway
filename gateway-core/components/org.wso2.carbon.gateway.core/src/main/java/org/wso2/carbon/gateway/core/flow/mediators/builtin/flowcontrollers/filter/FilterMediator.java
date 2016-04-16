@@ -32,7 +32,7 @@ import org.wso2.carbon.messaging.CarbonMessage;
 import java.util.regex.Pattern;
 
 /**
- * Filter Mediator
+ * Filter Mediator.
  */
 public class FilterMediator extends AbstractMediator implements FlowController {
 

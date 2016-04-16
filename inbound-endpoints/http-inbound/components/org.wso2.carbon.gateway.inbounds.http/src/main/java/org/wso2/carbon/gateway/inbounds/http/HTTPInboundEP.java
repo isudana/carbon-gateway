@@ -27,7 +27,7 @@ import org.wso2.carbon.messaging.Constants;
 
 
 /**
- * HTTP Inbound Endpoint
+ * HTTP Inbound Endpoint.
  */
 public class HTTPInboundEP extends InboundEndpoint {
 

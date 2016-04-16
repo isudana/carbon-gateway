@@ -30,7 +30,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Send a Message out from Pipeline to an Outbound Endpoint
+ * Send a Message out from Pipeline to an Outbound Endpoint.
  */
 public class CallMediator extends AbstractMediator implements Invoker {
 

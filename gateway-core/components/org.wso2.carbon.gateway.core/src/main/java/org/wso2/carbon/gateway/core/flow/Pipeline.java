@@ -28,7 +28,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * A Class representing collection of Mediators
+ * A Class representing collection of Mediators.
  */
 public class Pipeline {
 

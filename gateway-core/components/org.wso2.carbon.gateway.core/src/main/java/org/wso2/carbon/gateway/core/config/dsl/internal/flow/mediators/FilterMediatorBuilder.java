@@ -25,7 +25,7 @@ import org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filte
 import java.util.regex.Pattern;
 
 /**
- * A class that responsible for create FilterMediator
+ * A class that responsible for create FilterMediator.
  */
 public class FilterMediatorBuilder {
 
@@ -47,7 +47,7 @@ public class FilterMediatorBuilder {
     }
 
     /**
-     * A util class
+     * A util class.
      */
     public static class ThenMediatorBuilder {
 
@@ -67,7 +67,7 @@ public class FilterMediatorBuilder {
     }
 
     /**
-     * A util class
+     * A util class.
      */
     public static class OtherwiseMediatorBuilder {
 

@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Interface for the Type Converters
+ * Interface for the Type Converters.
  */
 public interface TypeConverter {
 
     /**
-     * Converts the value to the specified type
+     * Converts the value to the specified type.
      *
      * @param inputStream the inputStream of cMsg
      * @return the converted value, or <tt>null</tt> if not possible to convert
@@ -38,7 +38,7 @@ public interface TypeConverter {
     InputStream convert(InputStream inputStream) throws TypeConversionException, IOException;
 
     /**
-     * Converts the value to the specified type
+     * Converts the value to the specified type.
      *
      * @param anyValue any type of an object
      * @return the converted value, or <tt>null</tt> if not possible to convert

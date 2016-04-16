@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core;
 
 /**
- * Constants for Gateway-core
+ * Constants for Gateway-core.
  */
 public class Constants {
 

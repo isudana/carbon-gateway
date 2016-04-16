@@ -24,33 +24,33 @@ import org.wso2.carbon.messaging.CarbonMessage;
 
 
 /**
- * Interface for Mediators
+ * Interface for Mediators.
  */
 public interface Mediator {
 
     /**
-     * Get the name of the Mediator
+     * Get the name of the Mediator.
      *
      * @return mediator name
      */
     String getName();
 
     /**
-     * Set the pointer to the next sibling in the pipeline
+     * Set the pointer to the next sibling in the pipeline.
      *
      * @param nextMediator Next sibling mediator in the pipeline
      */
     void setNext(Mediator nextMediator);
 
     /**
-     * Check whether a sibling is present after this in the pipeline
+     * Check whether a sibling is present after this in the pipeline.
      *
      * @return whether a sibling is present after this
      */
     boolean hasNext();
 
     /**
-     * Invoke the next sibling in the pipeline
+     * Invoke the next sibling in the pipeline.
      *
      * @param carbonMessage  Carbon Message
      * @param carbonCallback Incoming Callback
@@ -61,7 +61,7 @@ public interface Mediator {
             throws Exception;
 
     /**
-     * Receive the message
+     * Receive the message.
      *
      * @param carbonMessage  Carbon Message
      * @param carbonCallback Incoming Callback
@@ -72,7 +72,7 @@ public interface Mediator {
                                                                                 Exception;
 
     /**
-     * Set Mediator Configurations
+     * Set Mediator Configurations.
      *
      * @param parameters Parameters
      */

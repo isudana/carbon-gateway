@@ -20,7 +20,7 @@ package org.wso2.carbon.gateway.core.config.dsl.external;
 import org.wso2.carbon.gateway.core.config.GWConfigHolder;
 
 /**
- * A class that used to create entire configuration.Anyone can extend this and overwrite configure method with
+ * A class that used to create entire configuration.Anyone can extend this and overwrite configure method with.
  * relevant configuration
  */
 public abstract class WUMLConfigurationBuilder {
@@ -33,7 +33,7 @@ public abstract class WUMLConfigurationBuilder {
     }
 
     /**
-     * ESB Configuration Builder
+     * ESB Configuration Builder.
      */
     public static class IntegrationFlow {
 

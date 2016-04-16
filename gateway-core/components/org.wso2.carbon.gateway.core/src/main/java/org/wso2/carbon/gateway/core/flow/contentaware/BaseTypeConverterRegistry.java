@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Base implementation of a type converter registry
+ * Base implementation of a type converter registry.
  */
 public class BaseTypeConverterRegistry implements TypeConverterRegistry {
 

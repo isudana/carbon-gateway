@@ -22,7 +22,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Basic implementation for Outbound Endpoint
+ * Basic implementation for Outbound Endpoint.
  */
 public abstract class AbstractOutboundEndpoint implements OutboundEndpoint {
 

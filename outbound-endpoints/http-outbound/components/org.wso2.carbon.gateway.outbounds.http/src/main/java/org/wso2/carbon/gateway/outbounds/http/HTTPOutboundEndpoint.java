@@ -29,7 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * HTTP Outbound Endpoint
+ * HTTP Outbound Endpoint.
  */
 public class HTTPOutboundEndpoint extends AbstractOutboundEndpoint {
 

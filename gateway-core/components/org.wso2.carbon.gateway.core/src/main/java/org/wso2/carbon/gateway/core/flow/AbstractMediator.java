@@ -29,7 +29,7 @@ import org.wso2.carbon.messaging.CarbonMessage;
 import java.io.InputStream;
 
 /**
- * Base class for all the mediators. All the mediators must be extended from this base class
+ * Base class for all the mediators. All the mediators must be extended from this base class.
  */
 public abstract class AbstractMediator implements Mediator {
 
@@ -40,7 +40,7 @@ public abstract class AbstractMediator implements Mediator {
     Mediator nextMediator = null;
 
     /**
-     * Check whether a sibling is present after this in the pipeline
+     * Check whether a sibling is present after this in the pipeline.
      *
      * @return whether a sibling is present after this
      */
@@ -49,7 +49,7 @@ public abstract class AbstractMediator implements Mediator {
     }
 
     /**
-     * Invoke the next sibling in the pipeline
+     * Invoke the next sibling in the pipeline.
      *
      * @param carbonMessage  Carbon message
      * @param carbonCallback Incoming Callback
@@ -62,7 +62,7 @@ public abstract class AbstractMediator implements Mediator {
     }
 
     /**
-     * Set the pointer to the next sibling in the pipeline
+     * Set the pointer to the next sibling in the pipeline.
      *
      * @param nextMediator Next sibling mediator in the pipeline
      */
@@ -71,7 +71,7 @@ public abstract class AbstractMediator implements Mediator {
     }
 
     /**
-     * Set Mediator Configurations
+     * Set Mediator Configurations.
      *
      * @param parameterHolder Parameters Holder
      */

@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A FaultHandler class for engine
+ * A FaultHandler class for engine.
  */
 public class ErrorHandler implements FaultHandler {
 

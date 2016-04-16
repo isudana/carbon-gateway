@@ -23,7 +23,7 @@ import org.wso2.carbon.gateway.core.config.GWConfigHolder;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 
 /**
- * A Builder class for OutBound Endpoint
+ * A Builder class for OutBound Endpoint.
  */
 public class OutboundEndpointBuilder {
 

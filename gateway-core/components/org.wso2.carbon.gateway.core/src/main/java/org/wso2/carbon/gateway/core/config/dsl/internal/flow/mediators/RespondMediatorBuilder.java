@@ -22,7 +22,7 @@ package org.wso2.carbon.gateway.core.config.dsl.internal.flow.mediators;
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.invokers.RespondMediator;
 
 /**
- * A builder class for RespondMediator
+ * A builder class for RespondMediator.
  */
 public class RespondMediatorBuilder {
 

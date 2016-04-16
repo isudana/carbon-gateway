@@ -27,7 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * An implementation of InputStream to convert ByteBuffer queue to
+ * An implementation of InputStream to convert ByteBuffer queue to.
  * an input stream
  */
 

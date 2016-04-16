@@ -36,7 +36,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 /**
- * Class for converting a JSON input stream into an XML input stream
+ * Class for converting a JSON input stream into an XML input stream.
  */
 
 public class JSONtoXMLConverter extends AbstractTypeConverter {

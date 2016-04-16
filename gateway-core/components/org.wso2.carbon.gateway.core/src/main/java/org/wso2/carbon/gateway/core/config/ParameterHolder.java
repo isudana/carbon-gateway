@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Holder for set of parameters
+ * Holder for set of parameters.
  */
 public class ParameterHolder {
 

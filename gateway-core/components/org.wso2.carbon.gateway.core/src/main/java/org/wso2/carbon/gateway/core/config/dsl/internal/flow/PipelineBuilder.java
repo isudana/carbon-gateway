@@ -24,7 +24,7 @@ import org.wso2.carbon.gateway.core.config.dsl.internal.flow.mediators.MediatorC
 import org.wso2.carbon.gateway.core.flow.Pipeline;
 
 /**
- * A class Pipeline Builder
+ * A class Pipeline Builder.
  */
 public class PipelineBuilder extends MediatorCollectionBuilder {
 

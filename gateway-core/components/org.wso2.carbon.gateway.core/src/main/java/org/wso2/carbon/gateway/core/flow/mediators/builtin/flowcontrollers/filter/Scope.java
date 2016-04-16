@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filter;
 
 /**
- * An Enum class that contains Filtering Scopes
+ * An Enum class that contains Filtering Scopes.
  */
 public enum Scope {
 

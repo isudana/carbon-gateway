@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Place Holder for chain of mediators
+ * Place Holder for chain of mediators.
  */
 public class MediatorCollection {
 
@@ -34,7 +34,7 @@ public class MediatorCollection {
     }
 
     /**
-     * Get the first mediator in the collection
+     * Get the first mediator in the collection.
      *
      * @return first mediator of the collection
      */
@@ -43,7 +43,7 @@ public class MediatorCollection {
     }
 
     /**
-     * Get all the mediators
+     * Get all the mediators.
      *
      * @return all the mediators
      */
@@ -52,7 +52,7 @@ public class MediatorCollection {
     }
 
     /**
-     * Add a mediator to the collection
+     * Add a mediator to the collection.
      *
      * @param mediator mediator to be added
      */

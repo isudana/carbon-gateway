@@ -18,7 +18,7 @@
 package org.wso2.carbon.gateway.core.inbound;
 
 /**
- * Interface for Inbound Endpoints Deployer
+ * Interface for Inbound Endpoints Deployer.
  */
 public interface InboundEPDeployer {
 

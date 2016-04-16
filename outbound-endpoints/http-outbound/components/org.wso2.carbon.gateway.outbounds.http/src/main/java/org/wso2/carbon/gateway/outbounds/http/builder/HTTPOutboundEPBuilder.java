@@ -22,7 +22,7 @@ package org.wso2.carbon.gateway.outbounds.http.builder;
 import org.wso2.carbon.gateway.outbounds.http.HTTPOutboundEndpoint;
 
 /**
- * HTTP Outbound Builder
+ * HTTP Outbound Builder.
  */
 public class HTTPOutboundEPBuilder {
 
@@ -36,7 +36,7 @@ public class HTTPOutboundEPBuilder {
     }
 
     /**
-     * URI
+     * URI.
      */
     public static class URI {
         String uri;

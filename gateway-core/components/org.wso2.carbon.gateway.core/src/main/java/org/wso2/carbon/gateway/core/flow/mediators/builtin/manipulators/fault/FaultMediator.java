@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Mediator used to define custom error messages
+ * A Mediator used to define custom error messages.
  */
 public class FaultMediator extends AbstractMediator {
 

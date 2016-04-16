@@ -22,7 +22,7 @@ package org.wso2.carbon.gateway.core.config.dsl.internal.flow.mediators;
 import org.wso2.carbon.gateway.core.flow.Mediator;
 
 /**
- * A class that responsible for  add customer mediator to the execution line
+ * A class that responsible for  add customer mediator to the execution line.
  */
 public class CustomMediatorBuilder {
 

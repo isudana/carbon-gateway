@@ -25,7 +25,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Basic implementation of log mediator
+ * Basic implementation of log mediator.
  * TODO: Not implemented yet
  */
 public class LogMediator extends AbstractMediator {

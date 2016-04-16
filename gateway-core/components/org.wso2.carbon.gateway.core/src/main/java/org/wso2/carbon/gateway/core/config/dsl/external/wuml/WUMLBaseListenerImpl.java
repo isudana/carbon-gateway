@@ -41,7 +41,7 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 /**
- * Implementation class of the ANTLR generated listener class
+ * Implementation class of the ANTLR generated listener class.
  */
 public class WUMLBaseListenerImpl extends WUMLBaseListener {
 

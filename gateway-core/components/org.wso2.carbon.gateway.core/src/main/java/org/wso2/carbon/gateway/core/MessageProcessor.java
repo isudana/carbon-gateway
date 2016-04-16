@@ -29,7 +29,7 @@ import org.wso2.carbon.messaging.CarbonMessageProcessor;
 import org.wso2.carbon.messaging.TransportSender;
 
 /**
- *  Message Processor Implementation for Gateway
+ *  Message Processor Implementation for Gateway.
  *
  */
 public class MessageProcessor implements CarbonMessageProcessor {

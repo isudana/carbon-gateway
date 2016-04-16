@@ -18,12 +18,12 @@
 package org.wso2.carbon.gateway.core.flow;
 
 /**
- * Store for MediatorProviders
+ * Store for MediatorProviders.
  */
 public interface ProviderRegistry {
 
     /**
-     * Get an instance of mediator
+     * Get an instance of mediator.
      *
      * @param name Mediator name
      * @return instance of Mediator

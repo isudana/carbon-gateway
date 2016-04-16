@@ -24,7 +24,7 @@ import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
- * Basic implementation of transform mediator
+ * Basic implementation of transform mediator.
  * TODO: Not implemented yet
  */
 public class TransformMediator extends AbstractMediator {

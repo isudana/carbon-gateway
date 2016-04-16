@@ -44,7 +44,7 @@ import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stax.StAXSource;
 
 /**
- * This converts XML to JSON input stream
+ * This converts XML to JSON input stream.
  */
 public class XMLtoJSONTypeConverter implements TypeConverter {
 

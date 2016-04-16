@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.config;
 
 /**
- * Representation for a configuration parameter
+ * Representation for a configuration parameter.
  */
 public class Parameter {
 
