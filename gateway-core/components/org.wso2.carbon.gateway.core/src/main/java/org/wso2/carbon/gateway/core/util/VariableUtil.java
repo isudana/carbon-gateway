@@ -157,4 +157,60 @@ public class VariableUtil {
         }
     }
 
+    /**
+     * Find the map that contains a variable by traversing variable stack.
+     * @param carbonMessage
+     * @param name
+     * @return Variable value object.
+     */
+    public static Object getMap(CarbonMessage carbonMessage, String name) {
+        if (name.startsWith("$")) {
+            Stack<Map<String, Object>> variableStack =
+                    (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+            return findVariable(variableStack.peek(), name.substring(1), true);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Find the value of a given key traversing the variable stack.
+     * @param carbonMessage
+     * @param name
+     * @return Variable value object.
+     */
+    public static Object getValue(CarbonMessage carbonMessage, String name) {
+        if (name.startsWith("$")) {
+            Stack<Map<String, Object>> variableStack =
+                    (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+            return findVariable(variableStack.peek(), name.substring(1), false);
+        } else {
+            return name;
+        }
+    }
+
+    /**
+     * Recursively search variable stack for given key and return either the map containing the variable or
+     * the variable value itself.
+     * @param variables
+     * @param name
+     * @param map toggle whether variable value or map containing variable should be returned.
+     * @return Variable value or map object.
+     */
+    private static Object findVariable(Map<String, Object> variables, String name, boolean map) {
+        if (variables.containsKey(name)) {
+            if (!map) {
+                return variables.get(name);
+            } else {
+                return variables;
+            }
+        } else {
+            if (variables.containsKey(Constants.GW_GT_SCOPE)) {
+                return findVariable((Map<String, Object>) variables.get(Constants.GW_GT_SCOPE), name, map);
+            } else {
+                return null;
+            }
+        }
+    }
+
 }

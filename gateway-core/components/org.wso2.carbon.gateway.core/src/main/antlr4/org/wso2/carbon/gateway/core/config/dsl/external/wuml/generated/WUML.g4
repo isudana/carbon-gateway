@@ -109,6 +109,9 @@ routingStatementDef: IDENTIFIER WS+ ARROWX WS+ IDENTIFIER WS+
 // Variable definition statement
 variableStatement: VARX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
 
+// Variable assignment statement
+//variableAssignment: VAR_IDENTIFIER WS+ EQ_SYMBOL WS+ COMMENTSTRINGX;
+
 // Message routing statement
 /*
 routingStatement
@@ -311,6 +314,9 @@ WS
 
 IDENTIFIER
     : ('$')? ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
+
+VAR_IDENTIFIER
+    : ('$') ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
 
 ANY_STRING: ('$')? ('a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' | ':')+ ;
 

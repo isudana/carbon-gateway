@@ -72,6 +72,13 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     public void exitScript(WUMLParser.ScriptContext ctx) {
         super.exitScript(ctx);
     }
+//
+//    @Override
+//    public void exitVariableAssignment(WUMLParser.VariableAssignmentContext ctx) {
+//        ctx.VAR_IDENTIFIER();
+//        ctx.COMMENTSTRINGX();
+//        super.exitVariableAssignment(ctx);
+//    }
 
     @Override
     public void exitVariableStatement(WUMLParser.VariableStatementContext ctx) {
@@ -89,6 +96,7 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
         parameterHolder.addParameter(new Parameter("key", varIdentifier));
         parameterHolder.addParameter(new Parameter("value", varValue));
         parameterHolder.addParameter(new Parameter("type", varType));
+        parameterHolder.addParameter(new Parameter("assignment", "false"));
         mediator.setParameters(parameterHolder);
 
         if (pipelineStack.size() == 0) {
