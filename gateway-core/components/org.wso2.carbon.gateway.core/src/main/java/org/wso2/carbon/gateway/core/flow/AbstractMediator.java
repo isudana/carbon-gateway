@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import org.wso2.carbon.gateway.core.config.ParameterHolder;
 import org.wso2.carbon.gateway.core.flow.contentaware.ConversionManager;
-import org.wso2.carbon.gateway.core.flow.contentaware.MIMEType;
 import org.wso2.carbon.gateway.core.util.VariableUtil;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
@@ -98,7 +97,7 @@ public abstract class AbstractMediator implements Mediator {
         }
         sourceType = sourceType.split(";")[0];  // remove charset from Content-Type header
 
-        return ConversionManager.getInstance().convertTo(cMsg, sourceType, MIMEType.JSON);
+        return ConversionManager.getInstance().convertTo(cMsg, sourceType, targetType);
     }
 
     public void handleException(String msg) throws Exception {
