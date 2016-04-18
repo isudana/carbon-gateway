@@ -19,7 +19,7 @@
 package org.wso2.carbon.gateway.core.worker.disruptor.publisher;
 
 import com.lmax.disruptor.EventTranslator;
-import org.wso2.carbon.gateway.core.worker.WorkerProcessor;
+import org.wso2.carbon.gateway.core.flow.Mediator;
 import org.wso2.carbon.gateway.core.worker.disruptor.event.CarbonDisruptorEvent;
 
 /**
@@ -28,16 +28,16 @@ import org.wso2.carbon.gateway.core.worker.disruptor.event.CarbonDisruptorEvent;
 public class CarbonEventPublisher implements EventTranslator<CarbonDisruptorEvent> {
 
     private Object event;
-    private WorkerProcessor workerProcessor;
+    private Mediator mediator;
 
 
-    public CarbonEventPublisher(Object event , WorkerProcessor workerProcessor) {
+    public CarbonEventPublisher(Object event , Mediator mediator) {
         this.event = event;
-        this.workerProcessor = workerProcessor;
+        this.mediator = mediator;
     }
 
     public void translateTo(CarbonDisruptorEvent event, long sequence) {
         event.setEvent(this.event);
-        event.setWorkerProcessor(workerProcessor);
+        event.setMediator(mediator);
     }
 }

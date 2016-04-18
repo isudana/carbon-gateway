@@ -25,6 +25,7 @@ import org.wso2.carbon.gateway.core.flow.FlowController;
 import org.wso2.carbon.gateway.core.flow.FlowControllerCallback;
 import org.wso2.carbon.gateway.core.flow.Mediator;
 import org.wso2.carbon.gateway.core.flow.MediatorCollection;
+import org.wso2.carbon.gateway.core.flow.MediatorType;
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filter.evaluator.Evaluator;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
@@ -47,7 +48,10 @@ public class FilterMediator extends AbstractMediator implements FlowController {
 
     private Condition condition;
 
-    public FilterMediator() {};
+    public FilterMediator() {
+    }
+
+    ;
 
     public FilterMediator(Condition condition) {
         this.condition = condition;
@@ -87,7 +91,7 @@ public class FilterMediator extends AbstractMediator implements FlowController {
     @Override
     public boolean receive(CarbonMessage carbonMessage, CarbonCallback carbonCallback)
                throws Exception {
-
+        super.receive(carbonMessage, carbonCallback);
         if (source.getScope().equals(Scope.HEADER)) {
 
             if (Evaluator.isHeaderMatched(carbonMessage, source, pattern)) {
@@ -100,6 +104,11 @@ public class FilterMediator extends AbstractMediator implements FlowController {
         }
 
         return true;
+    }
+
+    @Override
+    public MediatorType getMediatorType() {
+        return MediatorType.CPU_BOUND;
     }
 
 }

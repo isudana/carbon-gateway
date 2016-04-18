@@ -48,9 +48,14 @@ public class DisruptorConfiguration {
     @XmlElement(name = "parameter")
     private List<Parameter> parameters;
 
+    public DisruptorConfiguration(){
+
+    }
+
     public DisruptorConfiguration(String key) {
         this.id = key;
     }
+
 
     public List<Parameter> getParameters() {
         return parameters;

@@ -51,6 +51,8 @@ public final class Constants {
 
     public static final String IO_BOUND = "IO-bound";
 
+    public static final String PARENT_TYPE = "Parent-Type";
+
 
     public static final String PARENT_CALLBACK = "parent.callback";
 

@@ -18,8 +18,13 @@
 
 package org.wso2.carbon.gateway.core.worker.disruptor.handler;
 
-import org.wso2.carbon.gateway.core.worker.WorkerProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.gateway.core.flow.Mediator;
+import org.wso2.carbon.gateway.core.worker.Constants;
+import org.wso2.carbon.gateway.core.worker.WorkerUtil;
 import org.wso2.carbon.gateway.core.worker.disruptor.event.CarbonDisruptorEvent;
+import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 import java.util.concurrent.locks.Lock;
@@ -29,17 +34,34 @@ import java.util.concurrent.locks.Lock;
  */
 public class CarbonDisruptorEventHandler extends DisruptorEventHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(CarbonDisruptorEventHandler.class);
+
     public CarbonDisruptorEventHandler() {
     }
 
     @Override
     public void onEvent(CarbonDisruptorEvent carbonDisruptorEvent, long l, boolean b) throws Exception {
+
         CarbonMessage carbonMessage = (CarbonMessage) carbonDisruptorEvent.getEvent();
-        WorkerProcessor workerProcessor = carbonDisruptorEvent.getWorkerProcessor();
         Lock lock = carbonMessage.getLock();
         if (lock.tryLock()) {
-            workerProcessor.process(carbonMessage);
+            Object obj = carbonMessage.getProperty(Constants.PARENT_TYPE);
+            CarbonCallback carbonCallback = (CarbonCallback) carbonMessage.getProperty
+                       (org.wso2.carbon.messaging.Constants.CALL_BACK);
+            Object dir = carbonMessage.getProperty(org.wso2.carbon.messaging.Constants.DIRECTION);
+            if (dir != null && dir.equals(org.wso2.carbon.messaging.Constants.DIRECTION_RESPONSE)) {
+                carbonCallback.done(carbonMessage);
+            } else {
+                if (obj != null) {
+                    Mediator mediator = carbonDisruptorEvent.getMediator();
+                    mediator.receive(carbonMessage, carbonCallback);
+                } else {
+                    carbonMessage.setProperty(Constants.PARENT_TYPE, Constants.CPU_BOUND);
+                    WorkerUtil.dispatchToInboundEndpoint(carbonMessage);
+                }
+            }
         }
+
     }
 
 }

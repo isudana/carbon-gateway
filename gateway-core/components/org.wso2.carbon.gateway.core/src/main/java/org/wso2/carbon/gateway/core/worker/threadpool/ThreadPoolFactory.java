@@ -31,6 +31,8 @@ public class ThreadPoolFactory {
     private ExecutorService inbound;
     private ExecutorService outbound;
 
+    private boolean threadPoolingEnable;
+
     public void createThreadPool(int noOfThreads) {
         inbound = Executors.newFixedThreadPool(noOfThreads);
         outbound = Executors.newFixedThreadPool(noOfThreads);
@@ -42,6 +44,14 @@ public class ThreadPoolFactory {
 
     public ExecutorService getOutbound() {
         return outbound;
+    }
+
+    public boolean isThreadPoolingEnable() {
+        return threadPoolingEnable;
+    }
+
+    public void setThreadPoolingEnable(boolean threadPoolingEnable) {
+        this.threadPoolingEnable = threadPoolingEnable;
     }
 
     private ThreadPoolFactory() {

@@ -22,7 +22,10 @@ import org.wso2.carbon.gateway.core.worker.Constants;
 import org.wso2.carbon.gateway.core.worker.disruptor.config.DisruptorConfig;
 import org.wso2.carbon.gateway.core.worker.disruptor.config.DisruptorManager;
 import org.wso2.carbon.gateway.core.worker.threadpool.ThreadPoolFactory;
+
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -49,7 +52,9 @@ public class ThreadModelConfiguration {
         disruptorConfigurations.add(disruptorConfiguration);
         defaultConfig.setDisruptorConfigurations(disruptorConfigurations);
         ThreadPoolConfiguration threadPoolConfiguration = ThreadPoolConfiguration.getDefault();
-        defaultConfig.setThreadPoolConfiguration(threadPoolConfiguration);
+        Set<ThreadPoolConfiguration> threadPoolConfigurations1 = new HashSet<>();
+        threadPoolConfigurations1.add(threadPoolConfiguration);
+        defaultConfig.setThreadPoolConfigurations(threadPoolConfigurations1);
         return defaultConfig;
     }
 
@@ -57,25 +62,31 @@ public class ThreadModelConfiguration {
     @XmlElement(name = "disruptorConfiguration")
     private Set<DisruptorConfiguration> disruptorConfigurations;
 
-
+    @XmlElementWrapper(name = "threadPoolConfigurations")
     @XmlElement(name = "threadPoolConfiguration")
-    private ThreadPoolConfiguration threadPoolConfiguration;
+    private Set<ThreadPoolConfiguration> threadPoolConfigurations;
 
 
     public Set<DisruptorConfiguration> getDisruptorConfigurations() {
-        return disruptorConfigurations;
+        if (disruptorConfigurations == null) {
+            return Collections.EMPTY_SET;
+        }
+        return Collections.unmodifiableSet(disruptorConfigurations);
     }
 
     public void setDisruptorConfigurations(Set<DisruptorConfiguration> disruptorConfigurations) {
-        this.disruptorConfigurations = disruptorConfigurations;
+        this.disruptorConfigurations = Collections.unmodifiableSet(disruptorConfigurations);
     }
 
-    public ThreadPoolConfiguration getThreadPoolConfiguration() {
-        return threadPoolConfiguration;
+    public Set<ThreadPoolConfiguration> getThreadPoolConfigurations() {
+        if (threadPoolConfigurations == null) {
+            return Collections.EMPTY_SET;
+        }
+        return Collections.unmodifiableSet(threadPoolConfigurations);
     }
 
-    public void setThreadPoolConfiguration(ThreadPoolConfiguration threadPoolConfiguration) {
-        this.threadPoolConfiguration = threadPoolConfiguration;
+    public void setThreadPoolConfigurations(Set<ThreadPoolConfiguration> threadPoolConfigurations) {
+        this.threadPoolConfigurations = Collections.unmodifiableSet(threadPoolConfigurations);
     }
 
     public void configure() {
@@ -94,8 +105,8 @@ public class ThreadModelConfiguration {
                     } else if (parameter.getName().equals(Constants.WAIT_STRATEGY)) {
                         disruptorConfig.setDisruptorWaitStrategy(parameter.getValue());
                     }
-                    DisruptorManager.createDisruptors(DisruptorManager.DisruptorType.CPU_INBOUND, disruptorConfig);
                 }
+                DisruptorManager.createDisruptors(DisruptorManager.DisruptorType.CPU_INBOUND, disruptorConfig);
             } else if (id.equals(Constants.IO_BOUND)) {
                 DisruptorConfig disruptorConfig = new DisruptorConfig();
                 List<Parameter> parameterList = disruptorConfiguration.getParameters();
@@ -109,12 +120,19 @@ public class ThreadModelConfiguration {
                     } else if (parameter.getName().equals(Constants.WAIT_STRATEGY)) {
                         disruptorConfig.setDisruptorWaitStrategy(parameter.getValue());
                     }
-                    DisruptorManager.createDisruptors(DisruptorManager.DisruptorType.IO_INBOUND, disruptorConfig);
                 }
+                DisruptorManager.createDisruptors(DisruptorManager.DisruptorType.IO_INBOUND, disruptorConfig);
             }
 
 
         }
-        ThreadPoolFactory.getInstance().createThreadPool(threadPoolConfiguration.getNoOfThreads());
+        Iterator iterator = threadPoolConfigurations.iterator();
+        if (iterator.hasNext()) {
+            ThreadPoolConfiguration threadModelConfiguration = (ThreadPoolConfiguration) iterator.next();
+            ThreadPoolFactory.getInstance().createThreadPool
+                       (threadModelConfiguration.getNoOfThreads());
+            ThreadPoolFactory.getInstance().setThreadPoolingEnable(threadModelConfiguration.isEnable());
+        }
+
     }
 }

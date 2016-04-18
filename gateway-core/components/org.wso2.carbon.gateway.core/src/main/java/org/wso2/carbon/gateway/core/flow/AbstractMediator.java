@@ -19,6 +19,8 @@
 package org.wso2.carbon.gateway.core.flow;
 
 import org.wso2.carbon.gateway.core.config.ParameterHolder;
+import org.wso2.carbon.gateway.core.worker.Constants;
+import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
@@ -48,7 +50,8 @@ public abstract class AbstractMediator implements Mediator {
      * @throws Exception
      */
     public boolean next(CarbonMessage carbonMessage, CarbonCallback carbonCallback)
-            throws Exception {
+               throws Exception {
+
         return hasNext() && nextMediator.receive(carbonMessage, carbonCallback);
     }
 
@@ -70,4 +73,21 @@ public abstract class AbstractMediator implements Mediator {
         //Do nothing
     }
 
+
+    @Override
+    public boolean receive(CarbonMessage carbonMessage, CarbonCallback carbonCallback) throws Exception {
+        Object obj = carbonMessage.getProperty(Constants.PARENT_TYPE);
+        if (obj != null) {
+            String val = (String) obj;
+            if (val.equals(Constants.CPU_BOUND) && getMediatorType() == MediatorType.IO_BOUND) {
+                WorkerModelDispatcher.getInstance().
+                           dispatch(carbonMessage, this, MediatorType.IO_BOUND);
+
+            } else if (val.equals(Constants.IO_BOUND) && getMediatorType() == MediatorType.CPU_BOUND) {
+                WorkerModelDispatcher.getInstance().
+                           dispatch(carbonMessage, this, MediatorType.CPU_BOUND);
+            }
+        }
+        return false;
+    }
 }

@@ -77,4 +77,10 @@ public interface Mediator {
      * @param parameters Parameters
      */
     void setParameters(ParameterHolder parameters);
+
+    /**
+     * Whether CPU bound or IO bound.
+     * @return Mediator Type
+     */
+     MediatorType  getMediatorType();
 }

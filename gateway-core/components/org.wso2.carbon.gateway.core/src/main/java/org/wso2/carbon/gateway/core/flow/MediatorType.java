@@ -16,17 +16,12 @@
  * under the License.
  */
 
-package org.wso2.carbon.gateway.core.worker;
-
-
-import org.wso2.carbon.messaging.CarbonMessage;
+package org.wso2.carbon.gateway.core.flow;
 
 /**
- * A interface which is representing actual business logic of Disruptor consumers.
- * A logic that needs to executed by Disruptor consumer threads need to be implemented using this interface.
+ * A class represents the Mediator types
  */
-public interface WorkerProcessor {
+public enum MediatorType {
 
-
-    public boolean process(CarbonMessage cMsg);
+    CPU_BOUND, IO_BOUND
 }

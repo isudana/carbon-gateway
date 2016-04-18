@@ -20,15 +20,13 @@ package org.wso2.carbon.gateway.core.flow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
-import org.wso2.carbon.gateway.core.worker.WorkerProcessor;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
 /**
  * Callback related to FlowController Mediators
  */
-public class FlowControllerCallback implements CarbonCallback, WorkerProcessor {
+public class FlowControllerCallback implements CarbonCallback {
 
     /* Incoming callback */
     CarbonCallback parentCallback;
@@ -38,7 +36,7 @@ public class FlowControllerCallback implements CarbonCallback, WorkerProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(FlowControllerCallback.class);
 
-    private boolean dispatchToThreadModel;
+
 
     public FlowControllerCallback(CarbonCallback parentCallback, Mediator mediator) {
         this.parentCallback = parentCallback;
@@ -47,29 +45,6 @@ public class FlowControllerCallback implements CarbonCallback, WorkerProcessor {
 
     @Override
     public void done(CarbonMessage carbonMessage) {
-        if (dispatchToThreadModel) {
-            WorkerModelDispatcher.getInstance().dispatch(carbonMessage, this, WorkerModelDispatcher.WorkerMode.CPU);
-
-        } else {
-            execute(carbonMessage);
-        }
-
-    }
-
-    @Override
-    public void workInSeparateThread(boolean b) {
-        this.dispatchToThreadModel = b;
-    }
-
-    public Mediator getMediator() {
-        return mediator;
-    }
-
-    public CarbonCallback getParentCallback() {
-        return parentCallback;
-    }
-
-    private void execute(CarbonMessage carbonMessage) {
         if (mediator.hasNext()) { // If Mediator has a sibling after this
             try {
                 mediator.next(carbonMessage, parentCallback);
@@ -80,12 +55,18 @@ public class FlowControllerCallback implements CarbonCallback, WorkerProcessor {
             //If no siblings handover message to the requester
             parentCallback.done(carbonMessage);
         }
+
     }
 
 
-    @Override
-    public boolean process(CarbonMessage cMsg) {
-        execute(cMsg);
-        return false;
+
+    public Mediator getMediator() {
+        return mediator;
     }
+
+    public CarbonCallback getParentCallback() {
+        return parentCallback;
+    }
+
+
 }

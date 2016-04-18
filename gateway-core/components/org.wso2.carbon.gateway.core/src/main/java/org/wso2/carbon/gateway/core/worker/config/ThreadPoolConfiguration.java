@@ -40,10 +40,17 @@ public class ThreadPoolConfiguration {
     @XmlAttribute(required = true)
     private int noOfThreads;
 
+    @XmlAttribute(required = true)
+    private String enable;
+
+    public ThreadPoolConfiguration() {
+
+    }
 
     public ThreadPoolConfiguration(int val) {
         this.noOfThreads = val;
     }
+
 
     public int getNoOfThreads() {
         return noOfThreads;
@@ -51,5 +58,16 @@ public class ThreadPoolConfiguration {
 
     public void setNoOfThreads(int noOfThreads) {
         this.noOfThreads = noOfThreads;
+    }
+
+    public boolean isEnable() {
+        if (enable == null) {
+            return false;
+        }
+        return Boolean.parseBoolean(enable);
+    }
+
+    public void setEnable(String enable) {
+        this.enable = enable;
     }
 }

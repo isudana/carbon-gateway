@@ -21,6 +21,7 @@ package org.wso2.carbon.gateway.core.flow.mediators.builtin.invokers;
 import org.wso2.carbon.gateway.core.flow.AbstractMediator;
 import org.wso2.carbon.gateway.core.flow.FlowControllerCallback;
 import org.wso2.carbon.gateway.core.flow.Invoker;
+import org.wso2.carbon.gateway.core.flow.MediatorType;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
@@ -47,5 +48,10 @@ public class RespondMediator extends AbstractMediator implements Invoker {
 
         parentCallback.done(carbonMessage);
         return true;
+    }
+
+    @Override
+    public MediatorType getMediatorType() {
+        return MediatorType.CPU_BOUND;
     }
 }
