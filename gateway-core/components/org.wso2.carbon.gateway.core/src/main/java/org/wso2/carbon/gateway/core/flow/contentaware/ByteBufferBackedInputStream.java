@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.gateway.core.flow.contentaware;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,8 @@ import java.util.concurrent.BlockingQueue;
  */
 
 public class ByteBufferBackedInputStream extends InputStream {
-    ByteBuffer buf;
-    BlockingQueue<ByteBuffer> buffersQueue;
+    private ByteBuffer buf;
+    private BlockingQueue<ByteBuffer> buffersQueue;
     private static final Logger log = LoggerFactory.getLogger(ByteBufferBackedInputStream.class);
 
     public ByteBufferBackedInputStream(ByteBuffer buf) {
@@ -82,6 +81,5 @@ public class ByteBufferBackedInputStream extends InputStream {
         } catch (InterruptedException e) {
             log.error("Error occurred during conversion from CarbonMessage", e);
         }
-
     }
 }

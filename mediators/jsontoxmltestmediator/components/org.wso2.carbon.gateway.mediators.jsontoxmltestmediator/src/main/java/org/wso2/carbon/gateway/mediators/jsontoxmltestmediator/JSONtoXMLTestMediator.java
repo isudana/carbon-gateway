@@ -24,6 +24,7 @@ import org.wso2.carbon.gateway.core.flow.AbstractMediator;
 import org.wso2.carbon.gateway.core.flow.contentaware.MIMEType;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
+import org.wso2.carbon.messaging.DefaultCarbonMessage;
 
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -74,6 +75,12 @@ public class JSONtoXMLTestMediator extends AbstractMediator {
         String msgBody = new String(charBuf.array());
 
         log.info("\n" + msgBody);
+
+        //TODO: Find a better way to consume the body of a carbon message
+
+        if(convertedMsg instanceof DefaultCarbonMessage) {
+            ((DefaultCarbonMessage) convertedMsg).setStringMessageBody(msgBody);
+        }
 
         return next(convertedMsg, carbonCallback);
     }

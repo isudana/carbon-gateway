@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.wso2.carbon.gateway.core.flow.contentaware;
@@ -30,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -69,18 +69,34 @@ public class ConversionManager {
         try {
             processedStream = converter.convert(inputStream);
             ByteBuffer outputByteBuffer = ByteBuffer.wrap(toByteArray(processedStream));
+
+            copyProperties(newCarbonMsg, cMsg.getProperties());
+            copyHeaders(newCarbonMsg, cMsg.getHeaders());
+
             newCarbonMsg.setHeader("Content-Type", targetType);
             newCarbonMsg.addMessageBody(outputByteBuffer);
             newCarbonMsg.setEndOfMsgAdded(true);
         } catch (TypeConversionException e) {
             log.error("Error in converting message body from: " + sourceType + " to: " + targetType);
         } catch (IOException e) {
-            log.error("Error " + e);
+            log.error("I/O Error: " + e);
         } finally {
             //TODO: do we need to close the input stream here ?
         }
 
         return newCarbonMsg;
+    }
+
+    private void copyHeaders(CarbonMessage cMsg, Map<String, String> headers) {
+        headers.forEach((k, v) -> {
+            if(!k.equals("Content-Type")) {
+                cMsg.setHeader(k, v);
+            }
+        });
+    }
+
+    private void copyProperties(CarbonMessage cMsg, Map<String, Object> properties) {
+        properties.forEach((k, v) -> cMsg.setProperty(k, v));
     }
 
     private byte[] toByteArray(final InputStream in) throws IOException {
@@ -98,7 +114,6 @@ public class ConversionManager {
     }
 
     private BlockingQueue<ByteBuffer> getMessageBody(CarbonMessage msg) {
-        BlockingQueue<ByteBuffer> msgBody = new LinkedBlockingQueue<>(msg.getFullMessageBody());
-        return msgBody;
+        return new LinkedBlockingQueue<>(msg.getFullMessageBody());
     }
 }
