@@ -20,13 +20,13 @@ package org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filt
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.gateway.core.flow.AbstractMediator;
-import org.wso2.carbon.gateway.core.flow.FlowController;
+import org.wso2.carbon.gateway.core.flow.AbstractFlowController;
 import org.wso2.carbon.gateway.core.flow.FlowControllerCallback;
 import org.wso2.carbon.gateway.core.flow.Mediator;
 import org.wso2.carbon.gateway.core.flow.MediatorCollection;
 import org.wso2.carbon.gateway.core.flow.MediatorType;
 import org.wso2.carbon.gateway.core.flow.mediators.builtin.flowcontrollers.filter.evaluator.Evaluator;
+import org.wso2.carbon.gateway.core.util.VariableUtil;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * Filter Mediator
  */
-public class FilterMediator extends AbstractMediator implements FlowController {
+public class FilterMediator extends AbstractFlowController {
 
     private static final Logger log = LoggerFactory.getLogger(FilterMediator.class);
 
@@ -96,10 +96,12 @@ public class FilterMediator extends AbstractMediator implements FlowController {
 
             if (Evaluator.isHeaderMatched(carbonMessage, source, pattern)) {
                 childThenMediatorList.getFirstMediator().
-                           receive(carbonMessage, new FlowControllerCallback(carbonCallback, this));
+                           receive(carbonMessage, new FlowControllerCallback(carbonCallback, this,
+                                   VariableUtil.getVariableStack(carbonMessage)));
             } else {
                 childOtherwiseMediatorList.getFirstMediator().
-                           receive(carbonMessage, new FlowControllerCallback(carbonCallback, this));
+                           receive(carbonMessage, new FlowControllerCallback(carbonCallback, this,
+                                   VariableUtil.getVariableStack(carbonMessage)));
             }
         }
 

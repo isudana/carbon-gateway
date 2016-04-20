@@ -90,6 +90,15 @@ public class ThreadModelConfiguration {
     }
 
     public void configure() {
+
+        Iterator iterator = threadPoolConfigurations.iterator();
+        if (iterator.hasNext()) {
+            ThreadPoolConfiguration threadModelConfiguration = (ThreadPoolConfiguration) iterator.next();
+            ThreadPoolFactory.getInstance().createThreadPool
+                       (threadModelConfiguration.getNoOfThreads());
+            ThreadPoolFactory.getInstance().setThreadPoolingEnable(threadModelConfiguration.isEnable());
+        }
+
         for (DisruptorConfiguration disruptorConfiguration : disruptorConfigurations) {
             String id = disruptorConfiguration.getId();
             if (id.equals(Constants.CPU_BOUND)) {
@@ -126,13 +135,7 @@ public class ThreadModelConfiguration {
 
 
         }
-        Iterator iterator = threadPoolConfigurations.iterator();
-        if (iterator.hasNext()) {
-            ThreadPoolConfiguration threadModelConfiguration = (ThreadPoolConfiguration) iterator.next();
-            ThreadPoolFactory.getInstance().createThreadPool
-                       (threadModelConfiguration.getNoOfThreads());
-            ThreadPoolFactory.getInstance().setThreadPoolingEnable(threadModelConfiguration.isEnable());
-        }
+
 
     }
 }

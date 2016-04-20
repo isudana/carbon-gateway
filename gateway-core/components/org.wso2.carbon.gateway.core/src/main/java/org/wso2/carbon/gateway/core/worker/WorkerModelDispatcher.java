@@ -65,8 +65,9 @@ public class WorkerModelDispatcher {
                            (DisruptorManager.DisruptorType.IO_INBOUND).getDisruptor();
                 ringBuffer.publishEvent(new CarbonEventPublisher(carbonMessage, null));
             }
-        } else if (!carbonMessage.getProperty(org.wso2.carbon.messaging.Constants.DIRECTION).
-                   equals(org.wso2.carbon.messaging.Constants.DIRECTION_RESPONSE)) {
+        } else if (!(carbonMessage.getProperty(org.wso2.carbon.messaging.Constants.DIRECTION)
+                   != null && carbonMessage.getProperty(org.wso2.carbon.messaging.Constants.DIRECTION).
+                   equals(org.wso2.carbon.messaging.Constants.DIRECTION_RESPONSE))) {
             ExecutorService executorService = ThreadPoolFactory.getInstance().getInbound();
             executorService.execute(new PoolWorker(carbonMessage));
         } else {

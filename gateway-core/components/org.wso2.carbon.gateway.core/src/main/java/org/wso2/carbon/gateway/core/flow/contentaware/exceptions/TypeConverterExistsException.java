@@ -16,13 +16,30 @@
  * under the License.
  */
 
-package org.wso2.carbon.gateway.core.flow;
-
+package org.wso2.carbon.gateway.core.flow.contentaware.exceptions;
 
 /**
- * An interface for identify FlowControllable artifacts
+ * Exception when failing to add type converters due there is already an existing type converter.
  */
-public interface FlowController extends Mediator {
+public class TypeConverterExistsException extends Exception {
 
+    private final Class<?> toType;
+    private final Class<?> fromType;
 
+    public TypeConverterExistsException(Class<?> toType, Class<?> fromType) {
+        super("Failed to add type converter because a type converter exists. " + fromType + " -> " + toType);
+        this.toType = toType;
+        this.fromType = fromType;
+
+    }
+
+    public Class<?> getToType() {
+        return toType;
+    }
+
+    public Class<?> getFromType() {
+        return fromType;
+    }
 }
+
+

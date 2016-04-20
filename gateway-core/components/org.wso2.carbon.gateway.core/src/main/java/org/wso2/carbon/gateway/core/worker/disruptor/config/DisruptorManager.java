@@ -34,6 +34,7 @@ import org.wso2.carbon.gateway.core.worker.Constants;
 import org.wso2.carbon.gateway.core.worker.disruptor.event.CarbonDisruptorEvent;
 import org.wso2.carbon.gateway.core.worker.disruptor.exception.GenericExceptionHandler;
 import org.wso2.carbon.gateway.core.worker.disruptor.handler.CarbonDisruptorEventHandler;
+import org.wso2.carbon.gateway.core.worker.threadpool.ThreadPoolFactory;
 
 
 import java.util.Map;
@@ -50,11 +51,11 @@ public class DisruptorManager {
     private static ConcurrentHashMap<DisruptorType, DisruptorConfig> disruptorConfigHashMap =
                new ConcurrentHashMap<>();
 
-    private static boolean doNotStart;
+
 
     @SuppressWarnings("unchecked")
     public static synchronized void createDisruptors(DisruptorType type, DisruptorConfig disruptorConfig) {
-        if (!doNotStart) {
+        if (!ThreadPoolFactory.getInstance().isThreadPoolingEnable()) {
             WaitStrategy inboundWaitStrategy = getWaitStrategy(disruptorConfig.getDisruptorWaitStrategy());
             for (int i = 0; i < disruptorConfig.getNoDisruptors(); i++) {
                 ExecutorService executorService = Executors.newFixedThreadPool
@@ -124,9 +125,7 @@ public class DisruptorManager {
         }
     }
 
-    public static synchronized void setDoNotStart(boolean doNotStart) {
-        DisruptorManager.doNotStart = doNotStart;
-    }
+
 
     /**
      * Describe types of disruptors.

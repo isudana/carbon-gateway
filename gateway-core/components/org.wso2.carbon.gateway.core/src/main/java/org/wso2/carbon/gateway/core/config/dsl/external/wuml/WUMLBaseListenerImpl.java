@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.gateway.core.config.dsl.external.wuml;
 
-
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.wso2.carbon.gateway.core.config.Parameter;
 import org.wso2.carbon.gateway.core.config.ParameterHolder;
@@ -25,6 +24,7 @@ import org.wso2.carbon.gateway.core.config.dsl.external.StringParserUtil;
 import org.wso2.carbon.gateway.core.config.dsl.external.WUMLConfigurationBuilder;
 import org.wso2.carbon.gateway.core.config.dsl.external.wuml.generated.WUMLBaseListener;
 import org.wso2.carbon.gateway.core.config.dsl.external.wuml.generated.WUMLParser;
+import org.wso2.carbon.gateway.core.flow.Group;
 import org.wso2.carbon.gateway.core.flow.Mediator;
 import org.wso2.carbon.gateway.core.flow.MediatorProviderRegistry;
 import org.wso2.carbon.gateway.core.flow.Pipeline;
@@ -36,6 +36,9 @@ import org.wso2.carbon.gateway.core.inbound.InboundEndpoint;
 import org.wso2.carbon.gateway.core.outbound.OutboundEPProviderRegistry;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -44,11 +47,18 @@ import java.util.regex.Pattern;
  */
 public class WUMLBaseListenerImpl extends WUMLBaseListener {
 
+    public static final String INBOUND = "INBOUND";
+    public static final String OUTBOUND = "OUTBOUND";
+    private static final String DOUBLECOLON = "::";
     WUMLConfigurationBuilder.IntegrationFlow integrationFlow;
     Stack<String> pipelineStack = new Stack<String>();
     Stack<FilterMediator> filterMediatorStack = new Stack<FilterMediator>();
     boolean ifMultiThenBlockStarted = false;
     boolean ifElseBlockStarted = false;
+    Map<String, String> identifierTypeMap = new HashMap<>();
+
+    boolean insideGroup = false;
+    private String groupPath;
 
     public WUMLBaseListenerImpl() {
         this.integrationFlow = new WUMLConfigurationBuilder.IntegrationFlow("default");
@@ -65,6 +75,33 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     @Override
     public void exitScript(WUMLParser.ScriptContext ctx) {
         super.exitScript(ctx);
+    }
+
+    @Override
+    public void exitVariableStatement(WUMLParser.VariableStatementContext ctx) {
+        String varType = ctx.TYPEDEFINITIONX().getText();
+        String varIdentifier = ctx.IDENTIFIER().getText();
+        String varValue = ctx.COMMENTSTRINGX().getText();
+
+        if (varType.toLowerCase(Locale.ROOT).equals("string")) {
+            varValue = StringParserUtil.getValueWithinDoubleQuotes(varValue);
+        }
+
+        Mediator mediator = MediatorProviderRegistry.getInstance().getMediator("property");
+
+        ParameterHolder parameterHolder = new ParameterHolder();
+        parameterHolder.addParameter(new Parameter("key", varIdentifier));
+        parameterHolder.addParameter(new Parameter("value", varValue));
+        parameterHolder.addParameter(new Parameter("type", varType));
+        mediator.setParameters(parameterHolder);
+
+        if (pipelineStack.size() == 0) {
+            integrationFlow.getGWConfigHolder().addGlobalVariable(varType, varIdentifier, varValue);
+        } else {
+            dropMediatorFilterAware(mediator);
+        }
+
+        super.exitVariableStatement(ctx);
     }
 
     @Override
@@ -103,15 +140,17 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
 
     @Override
     public void exitInboundEndpointDefStatement(WUMLParser.InboundEndpointDefStatementContext ctx) {
-        String protocolName = StringParserUtil.getValueWithinDoubleQuotes(ctx.inboundEndpointDef().
-                PROTOCOLDEF().getText());
+        identifierTypeMap.put(ctx.IDENTIFIER().getText(), INBOUND);
+        String protocolName = getValue(StringParserUtil.getValueWithinDoubleQuotes(ctx.inboundEndpointDef().
+                PROTOCOLDEF().getText())).toString();
 
         ParameterHolder parameterHolder = new ParameterHolder();
 
         for (TerminalNode terminalNode : ctx.inboundEndpointDef().PARAMX()) {
             String keyValue = terminalNode.getSymbol().getText();
             String key = keyValue.substring(1, keyValue.indexOf("("));
-            String value = keyValue.substring(keyValue.indexOf("\"") + 1, keyValue.lastIndexOf("\""));
+            String value =
+                    getValue(keyValue.substring(keyValue.indexOf("\"") + 1, keyValue.lastIndexOf("\""))).toString();
 
             parameterHolder.addParameter(new Parameter(key, value));
         }
@@ -126,29 +165,32 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
 
     @Override
     public void exitPipelineDefStatement(WUMLParser.PipelineDefStatementContext ctx) {
-        Pipeline pipeline = new Pipeline(ctx.IDENTIFIER().getText());
+        String pipeId = getValue(ctx.IDENTIFIER().getText()).toString();
+
+        Pipeline pipeline = new Pipeline(pipeId);
         integrationFlow.getGWConfigHolder().addPipeline(pipeline);
         super.exitPipelineDefStatement(ctx);
     }
 
     @Override
-    public void exitOutboundEndpointDefStatement(
-            WUMLParser.OutboundEndpointDefStatementContext ctx) {
-        String protocolName = StringParserUtil.getValueWithinDoubleQuotes(ctx.outboundEndpointDef().
-                PROTOCOLDEF().getText());
+    public void exitOutboundEndpointDefStatement(WUMLParser.OutboundEndpointDefStatementContext ctx) {
+        identifierTypeMap.put(ctx.IDENTIFIER().getText(), OUTBOUND);
+        String protocolName = getValue(StringParserUtil.getValueWithinDoubleQuotes(ctx.outboundEndpointDef().
+                PROTOCOLDEF().getText())).toString();
 
         ParameterHolder parameterHolder = new ParameterHolder();
 
         for (TerminalNode terminalNode : ctx.outboundEndpointDef().PARAMX()) {
             String keyValue = terminalNode.getSymbol().getText();
             String key = keyValue.substring(1, keyValue.indexOf("("));
-            String value = keyValue.substring(keyValue.indexOf("\"") + 1, keyValue.lastIndexOf("\""));
+            String value =
+                    getValue(keyValue.substring(keyValue.indexOf("\"") + 1, keyValue.lastIndexOf("\""))).toString();
 
             parameterHolder.addParameter(new Parameter(key, value));
         }
 
-        OutboundEndpoint outboundEndpoint =
-                OutboundEPProviderRegistry.getInstance().getProvider(protocolName).getEndpoint();
+        OutboundEndpoint outboundEndpoint = OutboundEPProviderRegistry.getInstance().getProvider(protocolName)
+                .getEndpoint();
         outboundEndpoint.setName(ctx.IDENTIFIER().getText());
         outboundEndpoint.setParameters(parameterHolder);
 
@@ -182,9 +224,10 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     }
 
     @Override
-    public void exitMediatorDef(WUMLParser.MediatorDefContext ctx) {
-        //String mediatorName = ctx.MEDIATORNAME().getText();
-        String mediatorName = ctx.IDENTIFIER().getText();
+    public void exitMediatorStatementDef(WUMLParser.MediatorStatementDefContext ctx) {
+        String mediatorDefinition = ctx.MEDIATORDEFINITIONX().getText();
+        String mediatorName = mediatorDefinition.split(DOUBLECOLON)[1];
+
         String configurations = StringParserUtil.getValueWithinDoubleQuotes(ctx.ARGUMENTLISTDEF().getText());
         Mediator mediator = MediatorProviderRegistry.getInstance().getMediator(mediatorName);
 
@@ -193,16 +236,8 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
         mediator.setParameters(parameterHolder);
 
         // mediator.setParameters(configurations);
-        if (ifMultiThenBlockStarted) {
-            filterMediatorStack.peek().addThenMediator(mediator);
-
-        } else if (ifElseBlockStarted) {
-            filterMediatorStack.peek().addOtherwiseMediator(mediator);
-
-        } else {
-            integrationFlow.getGWConfigHolder().getPipeline(pipelineStack.peek()).addMediator(mediator);
-        }
-        super.exitMediatorDef(ctx);
+        dropMediatorFilterAware(mediator);
+        super.exitMediatorStatementDef(ctx);
     }
 
     @Override
@@ -213,66 +248,6 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     @Override
     public void exitRoutingStatement(WUMLParser.RoutingStatementContext ctx) {
         super.exitRoutingStatement(ctx);
-    }
-
-    @Override
-    public void exitInvokeFromSource(WUMLParser.InvokeFromSourceContext ctx) {
-        //String inbountEndpointName = ctx.INBOUNDENDPOINTNAME().getText();
-        String pipelineName = ctx.IDENTIFIER(1).getText();
-        integrationFlow.getGWConfigHolder().getInboundEndpoint().setPipeline(pipelineName);
-        pipelineStack.push(pipelineName);
-        //activePipeline = pipelineName;
-        super.exitInvokeFromSource(ctx);
-    }
-
-    @Override
-    public void exitInvokeToTarget(WUMLParser.InvokeToTargetContext ctx) {
-        Mediator mediator = MediatorProviderRegistry.getInstance().getMediator("call");
-
-        ParameterHolder parameterHolder = new ParameterHolder();
-        parameterHolder.addParameter(new Parameter("endpointKey", ctx.IDENTIFIER(1).getText()));
-
-        mediator.setParameters(parameterHolder);
-        if (ifMultiThenBlockStarted) {
-            filterMediatorStack.peek().addThenMediator(mediator);
-
-        } else if (ifElseBlockStarted) {
-            filterMediatorStack.peek().addOtherwiseMediator(mediator);
-
-        } else {
-//            String mediatorName = StringParserUtil.getValueWithinDoubleQuotes(ctx.MEDIATORNAMESTRINGX().getText());
-//            String configurations = StringParserUtil.getValueWithinDoubleQuotes(ctx.CONFIGSDEF().getText());
-//            Mediator mediator = MediatorFactory.getMediator(MediatorType.valueOf(mediatorName), configurations);
-            integrationFlow.getGWConfigHolder().getPipeline(pipelineStack.peek()).addMediator(mediator);
-        }
-        pipelineStack.pop();
-        super.exitInvokeToTarget(ctx);
-    }
-
-    @Override
-    public void exitInvokeFromTarget(WUMLParser.InvokeFromTargetContext ctx) {
-        String pipelineName = ctx.IDENTIFIER(1).getText();
-        pipelineStack.push(pipelineName);
-        super.exitInvokeFromTarget(ctx);
-    }
-
-    @Override
-    public void exitInvokeToSource(WUMLParser.InvokeToSourceContext ctx) {
-        Mediator mediator = MediatorProviderRegistry.getInstance().getMediator("respond");
-        if (ifMultiThenBlockStarted) {
-            filterMediatorStack.peek().addThenMediator(mediator);
-
-        } else if (ifElseBlockStarted) {
-            filterMediatorStack.peek().addOtherwiseMediator(mediator);
-
-        } else {
-//            String mediatorName = StringParserUtil.getValueWithinDoubleQuotes(ctx.MEDIATORNAMESTRINGX().getText());
-//            String configurations = StringParserUtil.getValueWithinDoubleQuotes(ctx.CONFIGSDEF().getText());
-//            Mediator mediator = MediatorFactory.getMediator(MediatorType.valueOf(mediatorName), configurations);
-            integrationFlow.getGWConfigHolder().getPipeline(pipelineStack.peek()).addMediator(mediator);
-        }
-        pipelineStack.pop();
-        super.exitInvokeToSource(ctx);
     }
 
     @Override
@@ -317,8 +292,7 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
             }
         }
 
-        Condition condition =
-                new Condition(source, Pattern.compile(conditionValue));
+        Condition condition = new Condition(source, Pattern.compile(conditionValue));
 
         FilterMediator filterMediator = new FilterMediator(condition);
         integrationFlow.getGWConfigHolder().getPipeline(pipelineStack.peek()).addMediator(filterMediator);
@@ -352,11 +326,6 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     }
 
     @Override
-    public void exitGroupStatement(WUMLParser.GroupStatementContext ctx) {
-        super.exitGroupStatement(ctx);
-    }
-
-    @Override
     public void exitLoopStatement(WUMLParser.LoopStatementContext ctx) {
         super.exitLoopStatement(ctx);
     }
@@ -372,4 +341,119 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
         super.exitExpression(ctx);
     }
 
+    @Override
+    public void exitRoutingStatementDef(WUMLParser.RoutingStatementDefContext ctx) {
+        String firstIdentifier = ctx.IDENTIFIER(0).getText();
+        String secondIdentifier = ctx.IDENTIFIER(1).getText();
+        String identifierType;
+
+        String firstType = identifierTypeMap.get(firstIdentifier);
+        if (firstType != null) {
+            if (INBOUND.equals(firstType)) {
+                identifierType = "invokeFromSource";
+            } else {
+                identifierType = "invokeFromTarget";
+            }
+
+        } else {
+            String secondType = identifierTypeMap.get(secondIdentifier);
+            if (INBOUND.equals(secondType)) {
+                identifierType = "invokeToSource";
+            } else {
+                identifierType = "invokeToTarget";
+            }
+        }
+
+        String pipelineName = ctx.IDENTIFIER(1).getText();
+        switch (identifierType) {
+        case "invokeFromSource":
+            if (insideGroup) {
+                integrationFlow.getGWConfigHolder().getGroup(groupPath).setPipeline(pipelineName);
+            } else {
+                integrationFlow.getGWConfigHolder().getInboundEndpoint().setPipeline(pipelineName);
+            }
+
+            pipelineStack.push(pipelineName);
+            break;
+        case "invokeFromTarget":
+            pipelineStack.push(pipelineName);
+            break;
+        case "invokeToSource":
+            Mediator respondMediator = MediatorProviderRegistry.getInstance().getMediator("respond");
+            dropMediatorFilterAware(respondMediator);
+            pipelineStack.pop();
+            break;
+        case "invokeToTarget":
+            Mediator callMediator = MediatorProviderRegistry.getInstance().getMediator("call");
+
+            ParameterHolder parameterHolder = new ParameterHolder();
+            parameterHolder.addParameter(new Parameter("endpointKey", ctx.IDENTIFIER(1).getText()));
+
+            callMediator.setParameters(parameterHolder);
+            dropMediatorFilterAware(callMediator);
+            pipelineStack.pop();
+            break;
+
+        default:
+            break;
+        }
+
+        super.exitRoutingStatementDef(ctx);
+    }
+
+    @Override
+    public void enterGroupStatement(WUMLParser.GroupStatementContext ctx) {
+        insideGroup = true;
+        super.enterGroupStatement(ctx);
+    }
+
+    @Override
+    public void exitGroupDefStatement(WUMLParser.GroupDefStatementContext ctx) {
+        String path = StringParserUtil.getValueWithinDoubleQuotes(ctx.GROUP_PATH_DEF().getText().split("path=")[1]);
+        Group group = new Group(path);
+        groupPath = path;
+        group.setMethod(
+                StringParserUtil.getValueWithinDoubleQuotes(ctx.GROUP_METHOD_DEF().getText().split("method=")[1]));
+
+        integrationFlow.getGWConfigHolder().addGroup(group);
+        super.exitGroupDefStatement(ctx);
+    }
+
+    @Override
+    public void exitGroupStatement(WUMLParser.GroupStatementContext ctx) {
+        insideGroup = false;
+        super.exitGroupStatement(ctx);
+    }
+
+    /**
+     * Helper method to place mediator in correct stack when filter mediator is in use in mediation flow.
+     * @param mediator
+     */
+    private void dropMediatorFilterAware(Mediator mediator) {
+        // mediator.setParameters(configurations);
+        if (ifMultiThenBlockStarted) {
+            filterMediatorStack.peek().addThenMediator(mediator);
+
+        } else if (ifElseBlockStarted) {
+            filterMediatorStack.peek().addOtherwiseMediator(mediator);
+
+        } else {
+            integrationFlow.getGWConfigHolder().getPipeline(pipelineStack.peek()).addMediator(mediator);
+        }
+    }
+
+    /**
+     * If variable detected, return value from global variable if it exists, in all other cases return key back.
+     * @param key
+     * @return Variable value or key
+     */
+    private Object getValue(String key) {
+        if (key.startsWith("$")) {
+            if (integrationFlow.getGWConfigHolder().getGlobalVariable(key.substring(1)) != null) {
+                return integrationFlow.getGWConfigHolder().getGlobalVariable(key.substring(1));
+            }
+        }
+
+        return key;
+    }
 }

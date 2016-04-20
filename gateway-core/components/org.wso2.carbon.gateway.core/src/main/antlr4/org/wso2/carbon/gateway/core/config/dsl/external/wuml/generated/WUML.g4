@@ -42,15 +42,10 @@ statementList
 statement
     : titleStatement
     | participantStatement
-    | mediatorStatement
-    | routingStatement
-    | parallelStatement
-    | ifStatement
-    | loopStatement
     | groupStatement
-    | refStatement
-    | commentStatement
-    ;
+    | messageflowStatementList
+    | variableStatement
+    | commentStatement;
 
 // Definition of the high level name for this message flow
 titleStatement
@@ -81,8 +76,33 @@ pipelineDefStatement
 outboundEndpointDefStatement
     : PARTICIPANT WS+ IDENTIFIER WS+ COLON WS+ outboundEndpointDef;
 
+groupStatement: groupDefStatement
+                messageflowStatementList
+                END;
+
+groupDefStatement: GROUP WS+  GROUP_NAME_DEF WS*
+                                 COMMA_SYMBOL WS* GROUP_PATH_DEF
+                                 COMMA_SYMBOL WS* GROUP_METHOD_DEF NEWLINE+;
+
+GROUP_NAME_DEF: NAME WS* EQ_SYMBOL STRINGX;
+GROUP_PATH_DEF: PATH WS* EQ_SYMBOL WS* URLSTRINGX;
+GROUP_METHOD_DEF: METHOD WS* EQ_SYMBOL WS* STRINGX;
+
+messageflowStatementList: (messageflowStatement NEWLINE+)*;
+
+messageflowStatement: routingStatement
+                          | mediatorStatement
+                          | parallelStatement
+                          | ifStatement
+                          | loopStatement
+                          | refStatement
+                          | variableStatement
+                          | commentStatement;
+
 // Definition of a mediator statement
-mediatorStatement : mediatorDef;
+mediatorStatement : mediatorStatementDef;
+
+mediatorStatementDef: MEDIATORDEFINITIONX ARGUMENTLISTDEF;
 
 // Integration Flow constructor statement
 integrationFlowDef: INTEGRATIONFLOWX LPAREN STRINGX RPAREN;
@@ -98,26 +118,13 @@ pipelineDef: PIPELINEX LPAREN COMMENTSTRINGX RPAREN;
 // Outbound Endpoint constructor statement
 outboundEndpointDef: OUTBOUNDENDPOINTX LPAREN PROTOCOLDEF PARAMX* RPAREN;
 
-// Mediator constructor statement
-mediatorDef: IDENTIFIER ARGUMENTLISTDEF WS+ COLON WS+ MEDIATORX;
+routingStatement: routingStatementDef;
 
+routingStatementDef: IDENTIFIER WS+ ARROWX WS+ IDENTIFIER WS+
+                  COLON WS+ COMMENTSTRINGX;
 
-routingStatement
-    : invokeFromSource
-    | invokeFromTarget
-    | invokeToSource
-    | invokeToTarget
-    ;
-
-invokeFromSource: IDENTIFIER WS+ ARROW1X WS+ IDENTIFIER WS+
-                  COMMENTX WS+ COMMENTSTRINGX;
-invokeToTarget: IDENTIFIER WS+ ARROW2X WS+ IDENTIFIER WS+
-                COMMENTX WS+ COMMENTSTRINGX;
-invokeFromTarget: IDENTIFIER WS+ ARROW3X WS+ IDENTIFIER WS+
-                  COMMENTX WS+ COMMENTSTRINGX;
-invokeToSource: IDENTIFIER WS+ ARROW4X WS+ IDENTIFIER WS+
-                COMMENTX WS+ COMMENTSTRINGX;
-
+// Variable definition statement
+variableStatement: VARX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
 
 // Message routing statement
 /*
@@ -136,15 +143,15 @@ parallelStatement
     ;
 
 parMultiThenBlock
-    : statementList NEWLINE (parElseBlock)? ;
+    : messageflowStatementList NEWLINE (parElseBlock)? ;
 
 
 parElseBlock
-    : (ELSE NEWLINE statementList)+ ;
+    : (ELSE NEWLINE messageflowStatementList)+ ;
 
-// Definition of 'alt' statement for if condition
+// Definition of 'if' statement for if condition
 ifStatement
-    : ALT WS WITH WS conditionStatement NEWLINE
+    : IF WS WITH WS conditionStatement NEWLINE
       NEWLINE? ifMultiThenBlock
       END
     ;
@@ -155,23 +162,16 @@ conditionStatement
 conditionDef: CONDITIONX LPAREN SOURCEDEF PARAMX* RPAREN;
 
 ifMultiThenBlock
-    : statementList NEWLINE (ifElseBlock)? ;
+    : messageflowStatementList NEWLINE (ifElseBlock)? ;
 
 
 ifElseBlock
-    : (ELSE NEWLINE statementList)+ ;
-
-// Definition of group statement
-groupStatement
-    : GROUP WS IDENTIFIER NEWLINE
-      NEWLINE? statementList
-      END
-    ;
+    : (ELSE NEWLINE messageflowStatementList)+ ;
 
 // Definition of loop statement
 loopStatement
     : LOOP WS expression NEWLINE
-      NEWLINE? statementList
+      NEWLINE? messageflowStatementList
       END
     ;
 // Definition of reference statement
@@ -206,6 +206,8 @@ DOUBLESLASHCOMMENTST
     : '//' COMMENTPARAMS
     ;
 
+TYPEDEFINITIONX: TYPEDEFINITION;
+
 //ROUTINGSTATEMENTX: ROUTINGSTATEMENT;
 
 SOURCEDEF: SOURCE LPAREN CONFIGPARAMS RPAREN;
@@ -237,7 +239,7 @@ INBOUNDENDPOINTX: INBOUNDENDPOINT;
 
 PIPELINEX: PIPELINE;
 
-MEDIATORX: MEDIATOR;
+MEDIATORDEFINITIONX: MEDIATORDEFINITION;
 
 OUTBOUNDENDPOINTX: OUTBOUNDENDPOINT;
 
@@ -247,18 +249,25 @@ ASX: AS;
 
 COMMENTX: COMMENT;
 
-COMMENTSTRINGX: COMMENTSTRING;
+COMMENTSTRINGX: COMMENTSTRING | NUMBER;
 
 STRINGX: STRING;
 
 URLSTRINGX: URLSTRING;
 
-ARROW1X: ARROW1;
-ARROW2X: ARROW2;
-ARROW3X: ARROW3;
-ARROW4X: ARROW4;
+ARROWX: ARROW;
 
+STRINGTYPEX: STRINGTYPE;
+INTEGERTYPEX: INTEGERTYPE;
+BOOLEANTYPEX: BOOLEANTYPE;
+DOUBLETYPEX: DOUBLETYPE;
+FLOATTYPEX: FLOATTYPE;
+LONGTYPEX: LONGTYPE;
+SHORTTYPEX: SHORTTYPE;
+XMLTYPEX: XMLTYPE;
+JSONTYPEX: JSONTYPE;
 
+VARX: VAR;
 
 // LEXER: Keywords
 
@@ -266,13 +275,16 @@ STARTUMLX: STARTUML;
 ENDUMLX: ENDUML;
 PARTICIPANT: P A R T I C I P A N T;
 PAR: P A R;
-ALT: A L T;
+IF: I F;
 REF: R E F;
 END: E N D;
 ELSE: E L S E;
 LOOP: L O O P;
 GROUP: G R O U P;
 WITH : W I T H ;
+NAME: N A M E;
+PATH: P A T H;
+METHOD: M E T H O D;
 
 
 // LEXER: symbol rules
@@ -295,11 +307,8 @@ STAR_SYMBOL : '*' ;
 SLASH_SYMBOL : '/' ;
 UNDERSCORE : '-';
 COLON: ':';
-ARROW: '->';
-fragment ARROW1: '=>+';
-fragment ARROW2: '=>>+';
-fragment ARROW3: '=>>-';
-fragment ARROW4: '=>-';
+fragment ARROW: '->';
+fragment MEDIATORDEFINITION: IDENTIFIER COLON COLON IDENTIFIER;
 SINGLEQUOTES: '\'';
 
 // LEXER: miscellaneaous
@@ -314,9 +323,10 @@ WS
     : ' ';
 
 IDENTIFIER
-    : ( 'a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
+    : ('$')? ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
 
-ANY_STRING: ( 'a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' | '.'|':')+ ;
+ANY_STRING: ('$')? ('a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' |'.'| ':')+ ;
+
 
 NUMBER
     : ( '0' | '1'..'9' DIGIT*) ('.' DIGIT+ )? ;
@@ -328,6 +338,7 @@ CONTINUATION
 
 WHITESPACE
     : [ \t]+ -> skip ;
+
 
 // LEXER: fragments to evaluate only within statements
 
@@ -363,7 +374,6 @@ fragment HTTP: H T T P;
 fragment PIPELINE: P I P E L I N E;
 fragment PROCESSMESSAGE: P R O C E S S M E S S A G E;
 fragment OUTBOUNDENDPOINT: O U T B O U N D E N D P O I N T ;
-fragment MEDIATOR: M E D I A T O R;
 fragment PROTOCOL: P R O T O C O L;
 fragment PORT: P O R T;
 fragment ENDPOINT: E N D P O I N T;
@@ -383,6 +393,29 @@ fragment RESPOND: R E S P O N D;
 fragment LOG: L O G;
 fragment ENRICH: E N R I C H;
 fragment TRANSFORM: T R A N S F O R M;
+fragment STRINGTYPE: S T R I N G;
+fragment INTEGERTYPE: I N T E G E R;
+fragment BOOLEANTYPE: B O O L E A N;
+fragment DOUBLETYPE: D O U B L E;
+fragment FLOATTYPE: F L O A T;
+fragment LONGTYPE: L O N G;
+fragment SHORTTYPE: S H O R T;
+fragment XMLTYPE: X M L;
+fragment JSONTYPE: J S O N;
+fragment VAR: V A R;
+
+fragment TYPEDEFINITION
+    : INTEGERTYPE
+    | STRINGTYPE
+    | BOOLEANTYPE
+    | LONGTYPE
+    | SHORTTYPE
+    | FLOATTYPE
+    | DOUBLETYPE
+    | XMLTYPE
+    | JSONTYPE
+    ;
+
 
 // case insensitive lexer matching
 fragment A:('a'|'A');

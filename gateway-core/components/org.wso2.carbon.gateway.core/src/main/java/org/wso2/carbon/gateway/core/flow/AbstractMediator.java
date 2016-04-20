@@ -18,16 +18,25 @@
 
 package org.wso2.carbon.gateway.core.flow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.gateway.core.Constants;
 import org.wso2.carbon.gateway.core.config.ParameterHolder;
-import org.wso2.carbon.gateway.core.worker.Constants;
+import org.wso2.carbon.gateway.core.flow.contentaware.ConversionManager;
 import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
+
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Base class for all the mediators. All the mediators must be extended from this base class
  */
 public abstract class AbstractMediator implements Mediator {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractMediator.class);
+
 
     /* Pointer for the next sibling in the pipeline*/
     Mediator nextMediator = null;
@@ -76,18 +85,82 @@ public abstract class AbstractMediator implements Mediator {
 
     @Override
     public boolean receive(CarbonMessage carbonMessage, CarbonCallback carbonCallback) throws Exception {
-        Object obj = carbonMessage.getProperty(Constants.PARENT_TYPE);
+        Object obj = carbonMessage.getProperty(org.wso2.carbon.gateway.core.worker.Constants.PARENT_TYPE);
         if (obj != null) {
             String val = (String) obj;
-            if (val.equals(Constants.CPU_BOUND) && getMediatorType() == MediatorType.IO_BOUND) {
+            if (val.equals(org.wso2.carbon.gateway.core.worker.Constants.CPU_BOUND) &&
+                getMediatorType() == MediatorType.IO_BOUND) {
                 WorkerModelDispatcher.getInstance().
                            dispatch(carbonMessage, this, MediatorType.IO_BOUND);
 
-            } else if (val.equals(Constants.IO_BOUND) && getMediatorType() == MediatorType.CPU_BOUND) {
+            } else if (val.equals(org.wso2.carbon.gateway.core.worker.Constants.IO_BOUND) &&
+                       getMediatorType() == MediatorType.CPU_BOUND) {
                 WorkerModelDispatcher.getInstance().
                            dispatch(carbonMessage, this, MediatorType.CPU_BOUND);
             }
         }
         return false;
+    }
+
+    /**
+     * Convert message into a specified format
+     *
+     * @param cMsg       Carbon Message
+     * @param targetType Type to be converted
+     * @return CarbonMessage with converted message body
+     * @throws Exception
+     */
+    public CarbonMessage convertTo(CarbonMessage cMsg, String targetType) throws Exception {
+
+        String sourceType = cMsg.getHeader("Content-Type");
+        if (sourceType == null) {
+            handleException("Content-Type header could not be found in the request");
+            return null; // to make findbugs happy
+        }
+        sourceType = sourceType.split(";")[0];  // remove charset from Content-Type header
+
+        return ConversionManager.getInstance().convertTo(cMsg, sourceType, targetType);
+    }
+
+    public void handleException(String msg) throws Exception {
+        handleException(msg, null);
+    }
+
+    public void handleException(String msg, Exception ex) throws Exception {
+        if (ex != null) {
+            log.error(msg, ex);
+            throw new Exception(msg, ex);
+        } else {
+            log.error(msg);
+            throw new Exception(msg);
+        }
+    }
+
+    public Object getValue(CarbonMessage carbonMessage, String name) {
+        if (name.startsWith("$")) {
+            Stack<Map<String, Object>> variableStack =
+                       (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+            return findVariableValue(variableStack.peek(), name.substring(1));
+        } else {
+            return name;
+        }
+    }
+
+    private Object findVariableValue(Map<String, Object> variables, String name) {
+        if (variables.containsKey(name)) {
+            return variables.get(name);
+        } else {
+            if (variables.containsKey(Constants.GW_GT_SCOPE)) {
+                return findVariableValue((Map<String, Object>) variables.get(Constants.GW_GT_SCOPE), name);
+            } else {
+                return null;
+            }
+        }
+
+    }
+
+    @Override
+    public MediatorType getMediatorType() {
+        return MediatorType.IO_BOUND;
     }
 }

@@ -176,7 +176,7 @@
                         <xmlOutput>true</xmlOutput>
                         <findbugsXmlOutputDirectory>${project.build.directory}/findbugs
                         </findbugsXmlOutputDirectory>
-                        <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+                        <excludeFilterFile>${maven.findbugsplugin.version.exclude}</excludeFilterFile>
                         <!--Exclude generated sources-->
                     </configuration>
                     <version>${maven.findbugsplugin.version}</version>
@@ -217,6 +217,23 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!-- ANTLR Plugin -->
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>4.5.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>antlr4</goal>
+                            </goals>
+                            <configuration>
+                                <listener>true</listener>
+                                <visitor>false</visitor>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -254,7 +271,7 @@
         <carbon.transport.package.import.version.range>[2.0.0, 2.1.0)
         </carbon.transport.package.import.version.range>
 
-        <carbon.messaging.version>1.0.2-SNAPSHOT</carbon.messaging.version>
+        <carbon.messaging.version>1.0.3-SNAPSHOT</carbon.messaging.version>
 
         <carbon.messaging.package.import.version.range>[0.0.0, 2.0.0)
         </carbon.messaging.package.import.version.range>
@@ -277,5 +294,6 @@
         <module>outbound-endpoints</module>
         <module>mediators</module>
         <module>archetypes</module>
+        <module>type-converters</module>
     </modules>
 </project>
