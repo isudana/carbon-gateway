@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.gateway.core.Constants;
 import org.wso2.carbon.gateway.core.config.ParameterHolder;
 import org.wso2.carbon.gateway.core.flow.contentaware.ConversionManager;
+import org.wso2.carbon.gateway.core.worker.WorkerModelDispatcher;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
@@ -58,7 +59,8 @@ public abstract class AbstractMediator implements Mediator {
      * @throws Exception
      */
     public boolean next(CarbonMessage carbonMessage, CarbonCallback carbonCallback)
-            throws Exception {
+               throws Exception {
+
         return hasNext() && nextMediator.receive(carbonMessage, carbonCallback);
     }
 
@@ -78,6 +80,26 @@ public abstract class AbstractMediator implements Mediator {
      */
     public void setParameters(ParameterHolder parameterHolder) {
         //Do nothing
+    }
+
+
+    @Override
+    public boolean receive(CarbonMessage carbonMessage, CarbonCallback carbonCallback) throws Exception {
+        Object obj = carbonMessage.getProperty(org.wso2.carbon.gateway.core.worker.Constants.PARENT_TYPE);
+        if (obj != null) {
+            String val = (String) obj;
+            if (val.equals(org.wso2.carbon.gateway.core.worker.Constants.CPU_BOUND) &&
+                getMediatorType() == MediatorType.IO_BOUND) {
+                WorkerModelDispatcher.getInstance().
+                           dispatch(carbonMessage, this, MediatorType.IO_BOUND);
+
+            } else if (val.equals(org.wso2.carbon.gateway.core.worker.Constants.IO_BOUND) &&
+                       getMediatorType() == MediatorType.CPU_BOUND) {
+                WorkerModelDispatcher.getInstance().
+                           dispatch(carbonMessage, this, MediatorType.CPU_BOUND);
+            }
+        }
+        return false;
     }
 
     /**
@@ -117,7 +139,7 @@ public abstract class AbstractMediator implements Mediator {
     public Object getValue(CarbonMessage carbonMessage, String name) {
         if (name.startsWith("$")) {
             Stack<Map<String, Object>> variableStack =
-                    (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+                       (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
             return findVariableValue(variableStack.peek(), name.substring(1));
         } else {
             return name;
@@ -134,5 +156,11 @@ public abstract class AbstractMediator implements Mediator {
                 return null;
             }
         }
+
+    }
+
+    @Override
+    public MediatorType getMediatorType() {
+        return MediatorType.IO_BOUND;
     }
 }

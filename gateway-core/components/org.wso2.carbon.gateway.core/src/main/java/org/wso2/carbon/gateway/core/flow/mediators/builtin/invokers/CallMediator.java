@@ -25,6 +25,7 @@ import org.wso2.carbon.gateway.core.config.ParameterHolder;
 import org.wso2.carbon.gateway.core.flow.AbstractMediator;
 import org.wso2.carbon.gateway.core.flow.FlowControllerCallback;
 import org.wso2.carbon.gateway.core.flow.Invoker;
+import org.wso2.carbon.gateway.core.flow.MediatorType;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 import org.wso2.carbon.gateway.core.util.VariableUtil;
 import org.wso2.carbon.messaging.CarbonCallback;
@@ -55,6 +56,11 @@ public class CallMediator extends AbstractMediator implements Invoker {
 
     public void setParameters(ParameterHolder parameterHolder) {
         outboundEPKey = parameterHolder.getParameter("endpointKey").getValue();
+    }
+
+    @Override
+    public MediatorType getMediatorType() {
+        return MediatorType.CPU_BOUND;
     }
 
     @Override

@@ -325,7 +325,8 @@ WS
 IDENTIFIER
     : ('$')? ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
 
-ANY_STRING: ('$')? ('a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' | ':')+ ;
+ANY_STRING: ('$')? ('a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' |'.'| ':')+ ;
+
 
 NUMBER
     : ( '0' | '1'..'9' DIGIT*) ('.' DIGIT+ )? ;
