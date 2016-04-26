@@ -45,6 +45,7 @@ statement
     | groupStatement
     | messageflowStatementList
     | variableStatement
+    | variableAssignment
     | commentStatement;
 
 // Definition of the high level name for this message flow
@@ -97,6 +98,7 @@ messageflowStatement: routingStatement
                           | loopStatement
                           | refStatement
                           | variableStatement
+                          | variableAssignment
                           | commentStatement;
 
 // Definition of a mediator statement
@@ -125,6 +127,9 @@ routingStatementDef: IDENTIFIER WS+ ARROWX WS+ IDENTIFIER WS+
 
 // Variable definition statement
 variableStatement: VARX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
+
+// Variable assignment statement
+variableAssignment: VAR_IDENTIFIER WS* COMMENTSTRINGX;
 
 // Message routing statement
 /*
@@ -324,6 +329,9 @@ WS
 
 IDENTIFIER
     : ('$')? ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ ;
+
+VAR_IDENTIFIER
+    : ('$') ('a'..'z' | 'A'..'Z' ) ( 'a'..'z' | 'A'..'Z' | DIGIT | '_')+ WS* ('=');
 
 ANY_STRING: ('$')? ('a'..'z' | 'A'..'Z' | DIGIT | '_' | '\\' | '/' | ':')+ ;
 

@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.gateway.core.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.gateway.core.flow.Group;
 import org.wso2.carbon.gateway.core.flow.Pipeline;
 import org.wso2.carbon.gateway.core.inbound.InboundEndpoint;
@@ -32,6 +34,8 @@ import java.util.Map;
  * Object Model which holds configurations related to a one GW process
  */
 public class GWConfigHolder {
+    private static final Logger log = LoggerFactory.getLogger(GWConfigHolder.class);
+
 
     private String name;
 
@@ -58,12 +62,20 @@ public class GWConfigHolder {
     }
 
     public void addGlobalVariable(String type, String key, String value) {
-        Object variable = VariableUtil.getVariable(type, value);
+        Object variable = VariableUtil.createVariable(type, value);
         globalVariables.put(key, variable);
     }
 
     public Object getGlobalVariable(String key) {
         return globalVariables.get(key);
+    }
+
+    public void updateGlobalVariable(String key, String value) {
+        if (globalVariables.get(key) == null) {
+            log.error("Variable " + key + " is not initialized.");
+        } else {
+            globalVariables.put(key, value);
+        }
     }
 
     public void removeGlobalVariable(String key) {
