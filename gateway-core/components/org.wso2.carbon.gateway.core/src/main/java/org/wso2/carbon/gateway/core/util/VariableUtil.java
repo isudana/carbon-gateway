@@ -35,7 +35,6 @@ public class VariableUtil {
 
     private static final Logger log = LoggerFactory.getLogger(VariableUtil.class);
 
-
     /**
      * Creates a new variable stack containing global variables and attaches this to CarbonMessage.
      * @param cMsg
@@ -129,7 +128,7 @@ public class VariableUtil {
      * @param value
      * @return Object of variable type
      */
-    public static Object getVariable(String type, String value) {
+    public static Object createVariable(String type, String value) {
         type = type.toLowerCase(Locale.ROOT);
         if (type.equals("string")) {
             return String.valueOf(value);
@@ -158,19 +157,40 @@ public class VariableUtil {
     }
 
     /**
+     * Returns the type of a variable object.
+     * @param variable
+     * @return object type as a string.
+     */
+    public static String getType(Object variable) {
+        if (variable instanceof String) {
+            return "String";
+        } else if (variable instanceof Integer) {
+            return "Integer";
+        } else if (variable instanceof Boolean) {
+            return "Boolean";
+        } else if (variable instanceof Double) {
+            return "Double";
+        } else if (variable instanceof Float) {
+            return "Float";
+        } else if (variable instanceof Long) {
+            return "Long";
+        } else if (variable instanceof Short) {
+            return "Short";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    /**
      * Find the map that contains a variable by traversing variable stack.
      * @param carbonMessage
      * @param name
      * @return Variable value object.
      */
     public static Object getMap(CarbonMessage carbonMessage, String name) {
-        if (name.startsWith("$")) {
-            Stack<Map<String, Object>> variableStack =
-                    (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
-            return findVariable(variableStack.peek(), name.substring(1), true);
-        } else {
-            return null;
-        }
+        Stack<Map<String, Object>> variableStack =
+                (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+        return findVariable(variableStack.peek(), name, true);
     }
 
     /**
@@ -179,14 +199,10 @@ public class VariableUtil {
      * @param name
      * @return Variable value object.
      */
-    public static Object getValue(CarbonMessage carbonMessage, String name) {
-        if (name.startsWith("$")) {
-            Stack<Map<String, Object>> variableStack =
-                    (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
-            return findVariable(variableStack.peek(), name.substring(1), false);
-        } else {
-            return name;
-        }
+    public static Object getVariable(CarbonMessage carbonMessage, String name) {
+        Stack<Map<String, Object>> variableStack =
+                (Stack<Map<String, Object>>) carbonMessage.getProperty(Constants.VARIABLE_STACK);
+        return findVariable(variableStack.peek(), name, false);
     }
 
     /**

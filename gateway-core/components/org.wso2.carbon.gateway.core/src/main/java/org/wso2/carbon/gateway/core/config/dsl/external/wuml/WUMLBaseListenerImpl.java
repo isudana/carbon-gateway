@@ -76,23 +76,34 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     public void exitScript(WUMLParser.ScriptContext ctx) {
         super.exitScript(ctx);
     }
-//
-//    @Override
-//    public void exitVariableAssignment(WUMLParser.VariableAssignmentContext ctx) {
-//        ctx.VAR_IDENTIFIER();
-//        ctx.COMMENTSTRINGX();
-//        super.exitVariableAssignment(ctx);
-//    }
+
+    @Override
+    public void exitVariableAssignment(WUMLParser.VariableAssignmentContext ctx) {
+        String varIdentifier = ctx.VAR_IDENTIFIER().getText().replace("=", "").trim().substring(1);
+        String varValue = StringParserUtil.getValueWithinDoubleQuotes(ctx.COMMENTSTRINGX().getText());
+
+        Mediator mediator = MediatorProviderRegistry.getInstance().getMediator("property");
+        ParameterHolder parameterHolder = new ParameterHolder();
+        parameterHolder.addParameter(new Parameter("key", varIdentifier));
+        parameterHolder.addParameter(new Parameter("value", varValue));
+        parameterHolder.addParameter(new Parameter("type", null));
+        parameterHolder.addParameter(new Parameter("assignment", "true"));
+        mediator.setParameters(parameterHolder);
+
+        if (pipelineStack.size() == 0) {
+            integrationFlow.getGWConfigHolder().updateGlobalVariable(varIdentifier, varValue);
+        } else {
+            dropMediatorFilterAware(mediator);
+        }
+
+        super.exitVariableAssignment(ctx);
+    }
 
     @Override
     public void exitVariableStatement(WUMLParser.VariableStatementContext ctx) {
         String varType = ctx.TYPEDEFINITIONX().getText();
         String varIdentifier = ctx.IDENTIFIER().getText();
-        String varValue = ctx.COMMENTSTRINGX().getText();
-
-        if (varType.toLowerCase(Locale.ROOT).equals("string")) {
-            varValue = StringParserUtil.getValueWithinDoubleQuotes(varValue);
-        }
+        String varValue =  StringParserUtil.getValueWithinDoubleQuotes(ctx.COMMENTSTRINGX().getText());
 
         Mediator mediator = MediatorProviderRegistry.getInstance().getMediator("property");
 

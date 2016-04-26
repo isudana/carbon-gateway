@@ -50,7 +50,7 @@ public class PropertyMediator extends AbstractMediator {
         this.value = value;
         this.type = type;
         this.assignment = assignment;
-        this.variable = VariableUtil.getVariable(type, value);
+        this.variable = VariableUtil.createVariable(type, value);
     }
 
     @Override
@@ -72,6 +72,8 @@ public class PropertyMediator extends AbstractMediator {
                 if (map == null) {
                    map = createAndPushMapIfNotExist(variableStack);
                 }
+                type = VariableUtil.getType(VariableUtil.getVariable(carbonMessage, key));
+                variable = VariableUtil.createVariable(type, value);
             } else {
                 map = createAndPushMapIfNotExist(variableStack);
             }
@@ -103,7 +105,9 @@ public class PropertyMediator extends AbstractMediator {
         value = parameterHolder.getParameter("value").getValue();
         type = parameterHolder.getParameter("type").getValue();
         assignment = Boolean.valueOf(parameterHolder.getParameter("assignment").getValue());
-        variable = VariableUtil.getVariable(type, value);
+        if (assignment == false) {
+            variable = VariableUtil.createVariable(type, value);
+        }
     }
 
 }

@@ -27,8 +27,6 @@ import org.wso2.carbon.gateway.core.util.VariableUtil;
 import org.wso2.carbon.messaging.CarbonCallback;
 import org.wso2.carbon.messaging.CarbonMessage;
 
-import java.io.InputStream;
-
 /**
  * Base class for all the mediators. All the mediators must be extended from this base class
  */
@@ -85,10 +83,10 @@ public abstract class AbstractMediator implements Mediator {
      *
      * @param cMsg       Carbon Message
      * @param targetType Type to be converted
-     * @return Converted Input Stream
+     * @return CarbonMessage with converted message body
      * @throws Exception
      */
-    public InputStream convertTo(CarbonMessage cMsg, String targetType) throws Exception {
+    public CarbonMessage convertTo(CarbonMessage cMsg, String targetType) throws Exception {
 
         String sourceType = cMsg.getHeader("Content-Type");
         if (sourceType == null) {
@@ -115,6 +113,10 @@ public abstract class AbstractMediator implements Mediator {
     }
 
     public Object getValue(CarbonMessage carbonMessage, String name) {
-        return VariableUtil.getValue(carbonMessage, name);
+        if (name.startsWith("$")) {
+            return VariableUtil.getVariable(carbonMessage, name.substring(1));
+        } else {
+            return name;
+        }
     }
 }
