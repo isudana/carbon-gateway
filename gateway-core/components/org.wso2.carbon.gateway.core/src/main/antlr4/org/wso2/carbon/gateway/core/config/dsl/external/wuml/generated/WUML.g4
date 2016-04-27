@@ -42,10 +42,10 @@ statementList
 statement
     : titleStatement
     | participantStatement
+    | constStatement
     | groupStatement
     | messageflowStatementList
     | variableStatement
-    | variableAssignment
     | commentStatement;
 
 // Definition of the high level name for this message flow
@@ -98,7 +98,6 @@ messageflowStatement: routingStatement
                           | loopStatement
                           | refStatement
                           | variableStatement
-                          | variableAssignment
                           | commentStatement;
 
 // Definition of a mediator statement
@@ -125,11 +124,19 @@ routingStatement: routingStatementDef;
 routingStatementDef: IDENTIFIER WS+ ARROWX WS+ IDENTIFIER WS+
                   COLON WS+ COMMENTSTRINGX;
 
+// A variable statement
+variableStatement: variableDeclarationStatement
+                    | variableAssignmentStatement
+                    ;
+
 // Variable definition statement
-variableStatement: VARX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
+variableDeclarationStatement: VARX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
 
 // Variable assignment statement
-variableAssignment: VAR_IDENTIFIER WS* COMMENTSTRINGX;
+variableAssignmentStatement: VAR_IDENTIFIER WS* COMMENTSTRINGX;
+
+// Constant definition statement
+constStatement: CONSTX WS+ TYPEDEFINITIONX WS+ IDENTIFIER WS* EQ_SYMBOL WS*  COMMENTSTRINGX;
 
 // Message routing statement
 /*
@@ -273,6 +280,7 @@ XMLTYPEX: XMLTYPE;
 JSONTYPEX: JSONTYPE;
 
 VARX: VAR;
+CONSTX: CONST;
 
 // LEXER: Keywords
 
@@ -410,6 +418,7 @@ fragment SHORTTYPE: S H O R T;
 fragment XMLTYPE: X M L;
 fragment JSONTYPE: J S O N;
 fragment VAR: V A R;
+fragment CONST: C O N S T;
 
 fragment TYPEDEFINITION
     : INTEGERTYPE

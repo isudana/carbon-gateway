@@ -47,7 +47,7 @@ public class GWConfigHolder {
 
     private Map<String, OutboundEndpoint> outboundEndpoints = new HashMap<>();
 
-    private Map<String, Object> globalVariables = new HashMap<>();
+    private Map<String, Object> globalConstants = new HashMap<>();
 
     public GWConfigHolder(String name) {
         this.name = name;
@@ -61,25 +61,30 @@ public class GWConfigHolder {
         this.name = name;
     }
 
-    public void addGlobalVariable(String type, String key, String value) {
+    public void addGlobalConstant(String type, String key, String value) {
         Object variable = VariableUtil.createVariable(type, value);
-        globalVariables.put(key, variable);
+        globalConstants.put(key, variable);
     }
 
-    public Object getGlobalVariable(String key) {
-        return globalVariables.get(key);
+    public Object getGlobalConstant(String key) {
+        return globalConstants.get(key);
     }
 
-    public void updateGlobalVariable(String key, String value) {
-        if (globalVariables.get(key) == null) {
-            log.error("Variable " + key + " is not initialized.");
+    /**
+     * Constants should not be allowed to be updated.
+     * @param key
+     * @param value
+     */
+    private void updateGlobalConstant(String key, String value) {
+        if (globalConstants.get(key) == null) {
+            log.error("Constant " + key + " is not initialized.");
         } else {
-            globalVariables.put(key, value);
+            globalConstants.put(key, value);
         }
     }
 
     public void removeGlobalVariable(String key) {
-        globalVariables.remove(key);
+        globalConstants.remove(key);
     }
 
     public InboundEndpoint getInboundEndpoint() {
@@ -111,8 +116,8 @@ public class GWConfigHolder {
         return outboundEndpoints.get(name);
     }
 
-    public Map<String, Object> getGlobalVariables() {
-        return globalVariables;
+    public Map<String, Object> getGlobalConstants() {
+        return globalConstants;
     }
 
     public void addOutboundEndpoint(OutboundEndpoint outboundEndpoint) {
