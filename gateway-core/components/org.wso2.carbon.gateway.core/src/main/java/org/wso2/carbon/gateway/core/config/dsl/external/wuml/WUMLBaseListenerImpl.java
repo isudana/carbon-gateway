@@ -37,7 +37,6 @@ import org.wso2.carbon.gateway.core.outbound.OutboundEPProviderRegistry;
 import org.wso2.carbon.gateway.core.outbound.OutboundEndpoint;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -78,7 +77,7 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
     }
 
     @Override
-    public void exitVariableAssignment(WUMLParser.VariableAssignmentContext ctx) {
+    public void exitVariableAssignmentStatement(WUMLParser.VariableAssignmentStatementContext ctx) {
         String varIdentifier = ctx.VAR_IDENTIFIER().getText().replace("=", "").trim().substring(1);
         String varValue = StringParserUtil.getValueWithinDoubleQuotes(ctx.COMMENTSTRINGX().getText());
 
@@ -91,17 +90,18 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
         mediator.setParameters(parameterHolder);
 
         if (pipelineStack.size() == 0) {
-            integrationFlow.getGWConfigHolder().updateGlobalVariable(varIdentifier, varValue);
+            // Only constant declarations allowed at the highest level.
+            //integrationFlow.getGWConfigHolder().updateGlobalConstant(varIdentifier, varValue);
         } else {
             dropMediatorFilterAware(mediator);
         }
 
-        super.exitVariableAssignment(ctx);
+        super.exitVariableAssignmentStatement(ctx);
     }
 
     @Override
-    public void exitVariableStatement(WUMLParser.VariableStatementContext ctx) {
-        String varType = ctx.TYPEDEFINITIONX().getText();
+    public void exitVariableDeclarationStatement(WUMLParser.VariableDeclarationStatementContext ctx) {
+            String varType = ctx.TYPEDEFINITIONX().getText();
         String varIdentifier = ctx.IDENTIFIER().getText();
         String varValue =  StringParserUtil.getValueWithinDoubleQuotes(ctx.COMMENTSTRINGX().getText());
 
@@ -115,12 +115,27 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
         mediator.setParameters(parameterHolder);
 
         if (pipelineStack.size() == 0) {
-            integrationFlow.getGWConfigHolder().addGlobalVariable(varType, varIdentifier, varValue);
+            // ignore, we only accept constants at highest level of mediation flow and these should not be updateable.
+            //integrationFlow.getGWConfigHolder().addGlobalConstant(varType, varIdentifier, varValue);
         } else {
             dropMediatorFilterAware(mediator);
         }
 
-        super.exitVariableStatement(ctx);
+        super.exitVariableDeclarationStatement(ctx);
+    }
+
+    @Override
+    public void exitConstStatement(WUMLParser.ConstStatementContext ctx) {
+        String constType = ctx.TYPEDEFINITIONX().getText();
+
+        String constIdentifier = ctx.IDENTIFIER().getText();
+        String constValue =  StringParserUtil.getValueWithinDoubleQuotes(ctx.COMMENTSTRINGX().getText());
+
+        if (pipelineStack.size() == 0) {
+            integrationFlow.getGWConfigHolder().addGlobalConstant(constType, constIdentifier, constValue);
+        } // constants only allowed at the highest level
+
+        super.exitConstStatement(ctx);
     }
 
     @Override
@@ -468,8 +483,8 @@ public class WUMLBaseListenerImpl extends WUMLBaseListener {
      */
     private Object getValue(String key) {
         if (key.startsWith("$")) {
-            if (integrationFlow.getGWConfigHolder().getGlobalVariable(key.substring(1)) != null) {
-                return integrationFlow.getGWConfigHolder().getGlobalVariable(key.substring(1));
+            if (integrationFlow.getGWConfigHolder().getGlobalConstant(key.substring(1)) != null) {
+                return integrationFlow.getGWConfigHolder().getGlobalConstant(key.substring(1));
             }
         }
 
